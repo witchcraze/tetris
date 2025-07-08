@@ -37,9 +37,23 @@ export class Tetromino {
     this.y += dy;
   }
 
+  rotate(): void {
+    // Transpose the matrix
+    for (let y = 0; y < this.shape.length; y++) {
+      for (let x = 0; x < y; x++) {
+        [this.shape[y][x], this.shape[x][y]] = [this.shape[x][y], this.shape[y][x]];
+      }
+    }
+
+    // Reverse the order of the columns
+    this.shape.forEach(row => row.reverse());
+  }
+
   getShape(): number[][] {
     return this.shape;
   }
 
-  // Placeholder for rotate(): void
+  setShape(newShape: number[][]): void {
+    this.shape = newShape;
+  }
 }

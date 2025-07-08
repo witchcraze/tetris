@@ -62,8 +62,15 @@ export class Game {
       case 'ArrowDown':
         newY++;
         break;
-      // case 'ArrowUp': // For rotation, will be implemented later
-      //   break;
+      case 'ArrowUp':
+        // Attempt to rotate
+        const originalShape = this.currentTetromino.getShape();
+        this.currentTetromino.rotate();
+        if (this.board.checkCollision(this.currentTetromino, newX, newY)) {
+          // If collision, revert rotation (simple approach for now)
+          this.currentTetromino.setShape(originalShape); // Need a setShape method in Tetromino
+        }
+        break;
     }
 
     if (!this.board.checkCollision(this.currentTetromino, newX, newY)) {
