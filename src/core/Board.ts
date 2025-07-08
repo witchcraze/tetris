@@ -48,7 +48,20 @@ export class Board {
     this.grid = Array(this.height).fill(null).map(() => Array(this.width).fill(null));
   }
 
+  clearLines(): number {
+    let linesCleared = 0;
+    for (let y = this.height - 1; y >= 0; y--) {
+      if (this.grid[y].every(cell => cell !== null)) {
+        // Line is full, clear it
+        this.grid.splice(y, 1);
+        this.grid.unshift(Array(this.width).fill(null));
+        linesCleared++;
+        y++; // Check the new line at the same row index
+      }
+    }
+    return linesCleared;
+  }
+
   // Placeholder for methods like:
-  // - clearLines(): number
   // - isGameOver(): boolean
 }
