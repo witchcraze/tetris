@@ -28,8 +28,14 @@ function gameLoop(currentTime: number) {
 
   renderer.clearCanvas();
   renderer.drawBoard(game.board);
-  if ((game as any).currentTetromino) {
-    renderer.drawTetromino((game as any).currentTetromino);
+  if (game.currentTetromino) {
+    renderer.drawTetromino(game.currentTetromino);
+  }
+  if (game.nextTetromino) {
+    renderer.drawNextTetromino(game.nextTetromino, BOARD_WIDTH + 2, 0); // Adjust position as needed
+  }
+  if (game.holdTetromino) {
+    renderer.drawHoldTetromino(game.holdTetromino, -5, 0); // Adjust position as needed
   }
 
   requestAnimationFrame(gameLoop);
