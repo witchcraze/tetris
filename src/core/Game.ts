@@ -4,7 +4,9 @@ import { Tetromino } from './Tetromino';
 export class Game {
   private board: Board;
   public currentTetromino: Tetromino | null = null; // Made public for now for easier access in index.ts
-  private nextTetromino: Tetromino | null = null;
+  public nextTetromino: Tetromino | null = null; // Made public for easier access in index.ts
+  public holdTetromino: Tetromino | null = null; // Made public for easier access in index.ts
+  private canHold: boolean = true;
   private score: number = 0;
   private gameOver: boolean = false;
 
@@ -18,6 +20,9 @@ export class Game {
     this.gameOver = false;
     this.score = 0;
     this.board.clear();
+    this.holdTetromino = null;
+    this.canHold = true;
+    this.nextTetromino = this.generateRandomTetromino();
     this.spawnTetromino();
   }
 
@@ -53,14 +58,18 @@ export class Game {
   }
 
   spawnTetromino(): void {
-    const randomType = this.tetrominoTypes[Math.floor(Math.random() * this.tetrominoTypes.length)];
-    const newTetromino = new Tetromino(Math.floor(this.board.width / 2) - 2, 0, randomType);
+    this.currentTetromino = this.nextTetromino;
+    this.nextTetromino = this.generateRandomTetromino();
 
-    if (this.board.checkCollision(newTetromino, newTetromino.x, newTetromino.y)) {
+    if (this.currentTetromino && this.board.checkCollision(this.currentTetromino, this.currentTetromino.x, this.currentTetromino.y)) {
       this.gameOver = true;
-    } else {
-      this.currentTetromino = newTetromino;
     }
+    this.canHold = true;
+  }
+
+  private generateRandomTetromino(): Tetromino {
+    const randomType = this.tetrominoTypes[Math.floor(Math.random() * this.tetrominoTypes.length)];
+    return new Tetromino(Math.floor(this.board.width / 2) - 2, 0, randomType);
   }
 
   handleInput(key: string): void {
@@ -86,6 +95,23 @@ export class Game {
         if (this.board.checkCollision(this.currentTetromino, newX, newY)) {
           // If collision, revert rotation (simple approach for now)
           this.currentTetromino.setShape(originalShape); // Need a setShape method in Tetromino
+        }
+        break;
+      case 'c': // Hold tetromino
+        if (this.canHold) {
+          if (this.holdTetromino) {
+            // Swap current with held
+            const temp = this.currentTetromino;
+            this.currentTetromino = this.holdTetromino;
+            this.holdTetromino = temp;
+            this.currentTetromino.x = Math.floor(this.board.width / 2) - 2;
+            this.currentTetromino.y = 0;
+          } else {
+            // Hold current and spawn new
+            this.holdTetromino = this.currentTetromino;
+            this.spawnTetromino();
+          }
+          this.canHold = false;
         }
         break;
     }
