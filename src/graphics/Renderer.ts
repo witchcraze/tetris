@@ -44,4 +44,13 @@ export class Renderer {
   clearCanvas(): void {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
   }
+
+  drawGameOver(): void {
+    this.ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+    this.ctx.fillRect(0, this.canvas.height / 2 - 30, this.canvas.width, 60);
+    this.ctx.fillStyle = 'white';
+    this.ctx.font = '30px Arial';
+    this.ctx.textAlign = 'center';
+    this.ctx.fillText('Game Over', this.canvas.width / 2, this.canvas.height / 2 + 10);
+  }
 }
