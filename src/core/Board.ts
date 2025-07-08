@@ -1,7 +1,9 @@
+import { Tetromino } from './Tetromino';
+
 export class Board {
-  private width: number;
-  private height: number;
-  private grid: (number | null)[][];
+  public width: number;
+  public height: number;
+  public grid: (number | null)[][];
 
   constructor(width: number, height: number) {
     this.width = width;
@@ -9,9 +11,44 @@ export class Board {
     this.grid = Array(height).fill(null).map(() => Array(width).fill(null));
   }
 
+  checkCollision(tetromino: Tetromino, newX: number, newY: number): boolean {
+    const shape = tetromino.getShape();
+    for (let y = 0; y < shape.length; y++) {
+      for (let x = 0; x < shape[y].length; x++) {
+        if (shape[y][x] !== 0) {
+          const boardX = newX + x;
+          const boardY = newY + y;
+
+          // Check boundaries
+          if (boardX < 0 || boardX >= this.width || boardY >= this.height) {
+            return true; // Collision with wall or floor
+          }
+          // Check collision with existing blocks (if boardY is within bounds)
+          if (boardY >= 0 && this.grid[boardY][boardX] !== null) {
+            return true; // Collision with existing block
+          }
+        }
+      }
+    }
+    return false;
+  }
+
+  placeTetromino(tetromino: Tetromino): void {
+    const shape = tetromino.getShape();
+    for (let y = 0; y < shape.length; y++) {
+      for (let x = 0; x < shape[y].length; x++) {
+        if (shape[y][x] !== 0) {
+          this.grid[tetromino.y + y][tetromino.x + x] = 1; // Mark as occupied
+        }
+      }
+    }
+  }
+
+  clear(): void {
+    this.grid = Array(this.height).fill(null).map(() => Array(this.width).fill(null));
+  }
+
   // Placeholder for methods like:
-  // - checkCollision(tetromino: Tetromino, x: number, y: number): boolean
-  // - placeTetromino(tetromino: Tetromino, x: number, y: number): void
   // - clearLines(): number
   // - isGameOver(): boolean
 }
