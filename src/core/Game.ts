@@ -30,8 +30,25 @@ export class Game {
         this.currentTetromino.move(0, 1);
       } else {
         this.board.placeTetromino(this.currentTetromino);
+        const linesCleared = this.board.clearLines();
+        this.score += this.getScoreForLines(linesCleared);
         this.spawnTetromino();
       }
+    }
+  }
+
+  private getScoreForLines(lines: number): number {
+    switch (lines) {
+      case 1:
+        return 100;
+      case 2:
+        return 300;
+      case 3:
+        return 500;
+      case 4:
+        return 800;
+      default:
+        return 0;
     }
   }
 
