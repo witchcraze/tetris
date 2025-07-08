@@ -53,4 +53,42 @@ export class Renderer {
     this.ctx.textAlign = 'center';
     this.ctx.fillText('Game Over', this.canvas.width / 2, this.canvas.height / 2 + 10);
   }
+
+  drawNextTetromino(tetromino: Tetromino, offsetX: number, offsetY: number): void {
+    const shape = tetromino.getShape();
+    const color = 'blue'; // Placeholder color
+
+    this.ctx.fillStyle = color;
+    for (let y = 0; y < shape.length; y++) {
+      for (let x = 0; x < shape[y].length; x++) {
+        if (shape[y][x] !== 0) {
+          this.ctx.fillRect(
+            (offsetX + x) * this.cellSize,
+            (offsetY + y) * this.cellSize,
+            this.cellSize,
+            this.cellSize
+          );
+        }
+      }
+    }
+  }
+
+  drawHoldTetromino(tetromino: Tetromino, offsetX: number, offsetY: number): void {
+    const shape = tetromino.getShape();
+    const color = 'green'; // Placeholder color
+
+    this.ctx.fillStyle = color;
+    for (let y = 0; y < shape.length; y++) {
+      for (let x = 0; x < shape[y].length; x++) {
+        if (shape[y][x] !== 0) {
+          this.ctx.fillRect(
+            (offsetX + x) * this.cellSize,
+            (offsetY + y) * this.cellSize,
+            this.cellSize,
+            this.cellSize
+          );
+        }
+      }
+    }
+  }
 }
