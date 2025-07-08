@@ -12,6 +12,12 @@ let lastTime = 0;
 const GAME_SPEED = 500; // Milliseconds per game update
 
 function gameLoop(currentTime: number) {
+  if (game.isGameOver()) {
+    // Display Game Over message
+    renderer.drawGameOver();
+    return; // Stop the game loop
+  }
+
   if (!lastTime) lastTime = currentTime;
   const deltaTime = currentTime - lastTime;
 
@@ -22,9 +28,6 @@ function gameLoop(currentTime: number) {
 
   renderer.clearCanvas();
   renderer.drawBoard(game.board);
-  // Assuming currentTetromino is public or has a getter in Game class
-  // For now, we'll directly access it for simplicity in this example
-  // In a real game, you might pass it via a render method or getter
   if ((game as any).currentTetromino) {
     renderer.drawTetromino((game as any).currentTetromino);
   }
@@ -36,7 +39,12 @@ function gameLoop(currentTime: number) {
 game.start();
 gameLoop(0);
 
-// Event listener for keyboard input placeholder
+// Event listener for keyboard input
 document.addEventListener('keydown', (event) => {
-  // game.handleInput(event.key);
+  if (game.isGameOver() && event.key === 'r') {
+    game.start();
+    gameLoop(0);
+  } else {
+    game.handleInput(event.key);
+  }
 });

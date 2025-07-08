@@ -94,4 +94,8 @@ export class Game {
       this.currentTetromino.move(newX - this.currentTetromino.x, newY - this.currentTetromino.y);
     }
   }
+
+  public isGameOver(): boolean {
+    return this.gameOver;
+  }
 }
