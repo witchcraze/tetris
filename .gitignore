@@ -1,2 +1,5 @@
-node_modules/
-dist/
+
+issue_body.md
+issue_comment_body.md
+pr_body.md
+self_review_comment.md
