@@ -2,7 +2,7 @@ import { Board } from './Board';
 import { Tetromino } from './Tetromino';
 
 export class Game {
-  private board: Board;
+  public board: Board;
   public currentTetromino: Tetromino | null = null; // Made public for now for easier access in index.ts
   public nextTetromino: Tetromino | null = null; // Made public for easier access in index.ts
   public holdTetromino: Tetromino | null = null; // Made public for easier access in index.ts
@@ -142,9 +142,12 @@ export class Game {
   public hardDrop(): void {
     if (this.gameOver || !this.currentTetromino) return;
 
+    const initialY = this.currentTetromino.y;
     const ghostPosition = this.getGhostTetrominoPosition();
     if (ghostPosition) {
       this.currentTetromino.y = ghostPosition.y;
+      const distanceDropped = this.currentTetromino.y - initialY;
+      this.score += distanceDropped * 2; // Score for hard drop (2 points per cell dropped)
       this.board.placeTetromino(this.currentTetromino);
       const linesCleared = this.board.clearLines();
       this.score += this.getScoreForLines(linesCleared);
