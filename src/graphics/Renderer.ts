@@ -99,6 +99,13 @@ export class Renderer {
     this.ctx.fillText(`Score: ${score}`, 10, 30);
   }
 
+  drawHighScore(highScore: number): void {
+    this.ctx.fillStyle = 'white';
+    this.ctx.font = '20px Arial';
+    this.ctx.textAlign = 'left';
+    this.ctx.fillText(`High Score: ${highScore}`, 10, 60);
+  }
+
   drawGhostTetromino(tetromino: Tetromino, ghostY: number): void {
     const shape = tetromino.getShape();
     const color = 'rgba(255, 255, 255, 0.3)'; // Transparent white
