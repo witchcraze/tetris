@@ -124,4 +124,8 @@ export class Game {
   public isGameOver(): boolean {
     return this.gameOver;
   }
+
+  public getScore(): number {
+    return this.score;
+  }
 }
