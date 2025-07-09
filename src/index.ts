@@ -10,7 +10,6 @@ const game = new Game(BOARD_WIDTH, BOARD_HEIGHT);
 const renderer = new Renderer('tetrisCanvas', CELL_SIZE);
 
 let lastTime = 0;
-const GAME_SPEED = 500; // Milliseconds per game update
 
 function gameLoop(currentTime: number) {
   if (game.isGameOver()) {
@@ -22,7 +21,7 @@ function gameLoop(currentTime: number) {
   if (!lastTime) lastTime = currentTime;
   const deltaTime = currentTime - lastTime;
 
-  if (deltaTime > GAME_SPEED) {
+  if (deltaTime > game.getDropSpeed()) {
     game.update();
     lastTime = currentTime;
   }
@@ -45,6 +44,7 @@ function gameLoop(currentTime: number) {
 
   renderer.drawScore(game.getScore());
   renderer.drawHighScore(game.getHighScore());
+  renderer.drawLevel(game.getLevel());
 
   requestAnimationFrame(gameLoop);
 }
