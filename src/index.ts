@@ -29,6 +29,10 @@ function gameLoop(currentTime: number) {
   renderer.clearCanvas();
   renderer.drawBoard(game.board);
   if (game.currentTetromino) {
+    const ghostPosition = game.getGhostTetrominoPosition();
+    if (ghostPosition) {
+      renderer.drawGhostTetromino(game.currentTetromino, ghostPosition.y);
+    }
     renderer.drawTetromino(game.currentTetromino);
   }
   if (game.nextTetromino) {

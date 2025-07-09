@@ -128,4 +128,14 @@ export class Game {
   public getScore(): number {
     return this.score;
   }
+
+  public getGhostTetrominoPosition(): { x: number, y: number } | null {
+    if (!this.currentTetromino) return null;
+
+    let ghostY = this.currentTetromino.y;
+    while (!this.board.checkCollision(this.currentTetromino, this.currentTetromino.x, ghostY + 1)) {
+      ghostY++;
+    }
+    return { x: this.currentTetromino.x, y: ghostY };
+  }
 }
