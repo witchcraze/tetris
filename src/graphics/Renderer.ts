@@ -98,4 +98,23 @@ export class Renderer {
     this.ctx.textAlign = 'left';
     this.ctx.fillText(`Score: ${score}`, 10, 30);
   }
+
+  drawGhostTetromino(tetromino: Tetromino, ghostY: number): void {
+    const shape = tetromino.getShape();
+    const color = 'rgba(255, 255, 255, 0.3)'; // Transparent white
+
+    this.ctx.fillStyle = color;
+    for (let y = 0; y < shape.length; y++) {
+      for (let x = 0; x < shape[y].length; x++) {
+        if (shape[y][x] !== 0) {
+          this.ctx.fillRect(
+            (tetromino.x + x) * this.cellSize,
+            (ghostY + y) * this.cellSize,
+            this.cellSize,
+            this.cellSize
+          );
+        }
+      }
+    }
+  }
 }
