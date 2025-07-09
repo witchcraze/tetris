@@ -106,6 +106,13 @@ export class Renderer {
     this.ctx.fillText(`High Score: ${highScore}`, 10, 60);
   }
 
+  drawLevel(level: number): void {
+    this.ctx.fillStyle = 'white';
+    this.ctx.font = '20px Arial';
+    this.ctx.textAlign = 'left';
+    this.ctx.fillText(`Level: ${level}`, 10, 90);
+  }
+
   drawGhostTetromino(tetromino: Tetromino, ghostY: number): void {
     const shape = tetromino.getShape();
     const color = 'rgba(255, 255, 255, 0.3)'; // Transparent white
