@@ -38,6 +38,8 @@ function gameLoop(currentTime: number) {
     renderer.drawHoldTetromino(game.holdTetromino, -5, 0); // Adjust position as needed
   }
 
+  renderer.drawScore(game.getScore());
+
   requestAnimationFrame(gameLoop);
 }
 

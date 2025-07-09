@@ -91,4 +91,11 @@ export class Renderer {
       }
     }
   }
+
+  drawScore(score: number): void {
+    this.ctx.fillStyle = 'white';
+    this.ctx.font = '20px Arial';
+    this.ctx.textAlign = 'left';
+    this.ctx.fillText(`Score: ${score}`, 10, 30);
+  }
 }
