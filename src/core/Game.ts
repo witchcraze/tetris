@@ -1,5 +1,6 @@
 import { Board } from './Board';
 import { Tetromino } from './Tetromino';
+import { LocalStorageManager } from '../utils/LocalStorageManager';
 
 export class Game {
   public board: Board;
@@ -8,6 +9,7 @@ export class Game {
   public holdTetromino: Tetromino | null = null; // Made public for easier access in index.ts
   private canHold: boolean = true;
   private score: number = 0;
+  private highScore: number = 0;
   private gameOver: boolean = false;
 
   private tetrominoTypes = ['I', 'J', 'L', 'O', 'S', 'T', 'Z'];
@@ -19,6 +21,7 @@ export class Game {
   start(): void {
     this.gameOver = false;
     this.score = 0;
+    this.highScore = parseInt(LocalStorageManager.loadItem('highScore') || '0');
     this.board.clear();
     this.holdTetromino = null;
     this.canHold = true;
@@ -122,11 +125,21 @@ export class Game {
   }
 
   public isGameOver(): boolean {
+    if (this.gameOver) {
+      if (this.score > this.highScore) {
+        this.highScore = this.score;
+        LocalStorageManager.saveItem('highScore', this.highScore.toString());
+      }
+    }
     return this.gameOver;
   }
 
   public getScore(): number {
     return this.score;
+  }
+
+  public getHighScore(): number {
+    return this.highScore;
   }
 
   public getGhostTetrominoPosition(): { x: number, y: number } | null {
