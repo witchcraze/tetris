@@ -57,6 +57,10 @@ document.addEventListener('keydown', (event) => {
     game.start();
     gameLoop(0);
   } else {
-    game.handleInput(event.key);
+    if (event.key === ' ') {
+      game.hardDrop();
+    } else {
+      game.handleInput(event.key);
+    }
   }
 });

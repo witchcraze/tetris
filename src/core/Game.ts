@@ -138,4 +138,17 @@ export class Game {
     }
     return { x: this.currentTetromino.x, y: ghostY };
   }
+
+  public hardDrop(): void {
+    if (this.gameOver || !this.currentTetromino) return;
+
+    const ghostPosition = this.getGhostTetrominoPosition();
+    if (ghostPosition) {
+      this.currentTetromino.y = ghostPosition.y;
+      this.board.placeTetromino(this.currentTetromino);
+      const linesCleared = this.board.clearLines();
+      this.score += this.getScoreForLines(linesCleared);
+      this.spawnTetromino();
+    }
+  }
 }
