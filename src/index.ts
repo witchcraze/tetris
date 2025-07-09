@@ -1,5 +1,6 @@
 import { Game } from './core/Game';
 import { Renderer } from './graphics/Renderer';
+import { LocalStorageManager } from './utils/LocalStorageManager';
 
 const BOARD_WIDTH = 10;
 const BOARD_HEIGHT = 20;
@@ -43,6 +44,7 @@ function gameLoop(currentTime: number) {
   }
 
   renderer.drawScore(game.getScore());
+  renderer.drawHighScore(game.getHighScore());
 
   requestAnimationFrame(gameLoop);
 }
