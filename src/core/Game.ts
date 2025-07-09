@@ -10,7 +10,6 @@ export class Game {
   private canHold: boolean = true;
   private score: number = 0;
   private highScore: number = 0;
-  private level: number = 1;
   private gameOver: boolean = false;
 
   private tetrominoTypes = ['I', 'J', 'L', 'O', 'S', 'T', 'Z'];
@@ -22,7 +21,6 @@ export class Game {
   start(): void {
     this.gameOver = false;
     this.score = 0;
-    this.level = 1;
     this.highScore = parseInt(LocalStorageManager.loadItem('highScore') || '0');
     this.board.clear();
     this.holdTetromino = null;
@@ -42,7 +40,6 @@ export class Game {
         this.board.placeTetromino(this.currentTetromino);
         const linesCleared = this.board.clearLines();
         this.score += this.getScoreForLines(linesCleared);
-        this.checkLevelUp();
         this.spawnTetromino();
       }
     }
@@ -60,13 +57,6 @@ export class Game {
         return 800;
       default:
         return 0;
-    }
-  }
-
-  private checkLevelUp(): void {
-    const newLevel = Math.floor(this.score / 1000) + 1;
-    if (newLevel > this.level) {
-      this.level = newLevel;
     }
   }
 
@@ -152,16 +142,6 @@ export class Game {
     return this.highScore;
   }
 
-  public getLevel(): number {
-    return this.level;
-  }
-
-  public getDropSpeed(): number {
-    // Adjust speed based on level (e.g., faster for higher levels)
-    // Base speed: 500ms, decrease by 50ms per level
-    return Math.max(50, 500 - (this.level - 1) * 50);
-  }
-
   public getGhostTetrominoPosition(): { x: number, y: number } | null {
     if (!this.currentTetromino) return null;
 
@@ -184,7 +164,6 @@ export class Game {
       this.board.placeTetromino(this.currentTetromino);
       const linesCleared = this.board.clearLines();
       this.score += this.getScoreForLines(linesCleared);
-      this.checkLevelUp();
       this.spawnTetromino();
     }
   }
