@@ -1,6 +1,7 @@
 import { Game } from './core/Game';
 import { Renderer } from './graphics/Renderer';
 import { LocalStorageManager } from './utils/LocalStorageManager';
+import { UIManager } from './ui/UIManager';
 
 const BOARD_WIDTH = 10;
 const BOARD_HEIGHT = 20;
@@ -8,13 +9,14 @@ const CELL_SIZE = 20;
 
 const game = new Game(BOARD_WIDTH, BOARD_HEIGHT);
 const renderer = new Renderer('tetrisCanvas', CELL_SIZE);
+const uiManager = new UIManager(game);
 
 let lastTime = 0;
 
 function gameLoop(currentTime: number) {
   if (game.isGameOver()) {
-    // Display Game Over message
-    renderer.drawGameOver();
+    uiManager.showGameOver();
+    uiManager.showStartButton();
     return; // Stop the game loop
   }
 
@@ -42,21 +44,19 @@ function gameLoop(currentTime: number) {
     renderer.drawHoldTetromino(game.holdTetromino, -5, 0); // Adjust position as needed
   }
 
-  renderer.drawScore(game.getScore());
+  uiManager.updateScore(game.getScore());
   renderer.drawHighScore(game.getHighScore());
   renderer.drawLevel(game.getLevel());
 
   requestAnimationFrame(gameLoop);
 }
 
-// Start the game loop
-game.start();
-gameLoop(0);
-
 // Event listener for keyboard input
 document.addEventListener('keydown', (event) => {
   if (game.isGameOver() && event.key === 'r') {
     game.start();
+    uiManager.hideGameOver();
+    uiManager.showStartButton(); // Hide start button on game start
     gameLoop(0);
   } else {
     if (event.key === ' ') {
@@ -66,3 +66,6 @@ document.addEventListener('keydown', (event) => {
     }
   }
 });
+
+// Initial setup
+uiManager.showStartButton();
