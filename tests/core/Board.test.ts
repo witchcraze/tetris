@@ -36,7 +36,7 @@ describe('Board', () => {
   });
 
   it('should collide with existing blocks', () => {
-    board.grid[0][0] = 1; // Place a block at (0,0)
+    board.grid[0][0] = 'test_color'; // Place a block at (0,0)
     const tetromino = new Tetromino(0, 0, 'O'); // O-tetromino is 2x2
     expect(board.checkCollision(tetromino, 0, 0)).toBe(true); // Should collide with the existing block
   });

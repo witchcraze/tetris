@@ -27,12 +27,13 @@ describe('Game', () => {
 
   it('should initialize score to 0', () => {
     expect(game.getScore()).toBe(0);
+    expect(game.getLevel()).toBe(1);
   });
 
   // Helper to fill a line on the game's board
   const fillLine = (y: number) => {
     for (let x = 0; x < game.board.width; x++) {
-      game.board.grid[y][x] = 1;
+      game.board.grid[y][x] = 'test_color';
     }
   };
 
