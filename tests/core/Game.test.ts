@@ -79,7 +79,8 @@ describe('Game', () => {
     expect(game.getScore()).toBe(800);
   });
 
-  game.currentTetromino = new Tetromino(0, 0, 'I'); // Start at top
+  it('should add score for hard drop (no line clear)', () => {
+    game.currentTetromino = new Tetromino(0, 0, 'I'); // Start at top
     const initialY = game.currentTetromino.y;
     const ghostY = game.getGhostTetrominoPosition()?.y || 0; // Get the expected final Y
     game.hardDrop();
@@ -177,3 +178,4 @@ describe('Game', () => {
     game['level'] = 11;
     expect(game.getDropSpeed()).toBe(50); // 500 - (11-1)*50 = 0. Capped at 50.
   });
+});
