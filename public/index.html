@@ -8,7 +8,14 @@
 </head>
 <body>
     <h1>Tetris Game</h1>
-    <canvas id="tetrisCanvas" width="200" height="400"></canvas>
+    <div id="game-container">
+        <canvas id="tetrisCanvas" width="200" height="400"></canvas>
+        <div id="game-ui">
+            <div id="score">Score: 0</div>
+            <button id="startButton">Start Game</button>
+            <div id="gameOver" style="display: none;">Game Over!</div>
+        </div>
+    </div>
     <script src="bundle.js"></script>
 </body>
 </html>
