@@ -3,7 +3,7 @@ import { Tetromino } from './Tetromino';
 export class Board {
   public width: number;
   public height: number;
-  public grid: (number | null)[][];
+  public grid: (string | null)[][];
 
   constructor(width: number, height: number) {
     this.width = width;
@@ -38,7 +38,7 @@ export class Board {
     for (let y = 0; y < shape.length; y++) {
       for (let x = 0; x < shape[y].length; x++) {
         if (shape[y][x] !== 0) {
-          this.grid[tetromino.y + y][tetromino.x + x] = 1; // Mark as occupied
+          this.grid[tetromino.y + y][tetromino.x + x] = tetromino.getColor(); // Store the color
         }
       }
     }

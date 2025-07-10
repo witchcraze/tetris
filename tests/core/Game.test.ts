@@ -27,12 +27,13 @@ describe('Game', () => {
 
   it('should initialize score to 0', () => {
     expect(game.getScore()).toBe(0);
+    expect(game.getLevel()).toBe(1);
   });
 
   // Helper to fill a line on the game's board
   const fillLine = (y: number) => {
     for (let x = 0; x < game.board.width; x++) {
-      game.board.grid[y][x] = 1;
+      game.board.grid[y][x] = 'test_color';
     }
   };
 
@@ -78,8 +79,7 @@ describe('Game', () => {
     expect(game.getScore()).toBe(800);
   });
 
-  it('should add score for hard drop (no line clear)', () => {
-    game.currentTetromino = new Tetromino(0, 0, 'I'); // Start at top
+  game.currentTetromino = new Tetromino(0, 0, 'I'); // Start at top
     const initialY = game.currentTetromino.y;
     const ghostY = game.getGhostTetrominoPosition()?.y || 0; // Get the expected final Y
     game.hardDrop();
@@ -142,4 +142,38 @@ describe('Game', () => {
     expect(game.getHighScore()).toBe(500);
     expect(localStorage.getItem('highScore')).toBe('500');
   });
-});
+
+  // Level Tests
+  it('should initialize level to 1', () => {
+    expect(game.getLevel()).toBe(1);
+  });
+
+  it('should increase level based on score', () => {
+    // Simulate score to reach level 2
+    game['score'] = 900; // Set score before line clear
+    game.currentTetromino = new Tetromino(0, 0, 'I'); // Place at top
+    fillLine(19); // Fill a line
+    game.hardDrop(); // This will add 100 (line clear) + 36 (hard drop) = 136. Total score = 900 + 136 = 1036
+    expect(game.getLevel()).toBe(2);
+
+    // Simulate score to reach level 3
+    game['score'] = 1900; // Set score before line clear
+    game.currentTetromino = new Tetromino(0, 0, 'I'); // Place at top
+    fillLine(19); // Fill a line
+    game.hardDrop(); // This will add 100 (line clear) + 36 (hard drop) = 136. Total score = 1900 + 136 = 2036
+    expect(game.getLevel()).toBe(3);
+  });
+
+  it('should return correct drop speed based on level', () => {
+    game['level'] = 1;
+    expect(game.getDropSpeed()).toBe(500); // 500 - (1-1)*50 = 500
+
+    game['level'] = 2;
+    expect(game.getDropSpeed()).toBe(450); // 500 - (2-1)*50 = 450
+
+    game['level'] = 10;
+    expect(game.getDropSpeed()).toBe(50); // 500 - (10-1)*50 = 50. Capped at 50.
+
+    game['level'] = 11;
+    expect(game.getDropSpeed()).toBe(50); // 500 - (11-1)*50 = 0. Capped at 50.
+  });

@@ -1,4 +1,5 @@
 import { Board } from '../core/Board';
+import { Tetromino } from '../core/Tetromino';
 
 export class Renderer {
   private canvas: HTMLCanvasElement;
@@ -14,8 +15,8 @@ export class Renderer {
   drawBoard(board: Board): void {
     for (let y = 0; y < board.height; y++) {
       for (let x = 0; x < board.width; x++) {
-        if (board.grid[y][x] !== 0) { // Assuming 0 is empty
-          this.ctx.fillStyle = 'gray'; // Placeholder color
+        if (board.grid[y][x] !== null) {
+          this.ctx.fillStyle = board.grid[y][x] as string;
           this.ctx.fillRect(x * this.cellSize, y * this.cellSize, this.cellSize, this.cellSize);
         }
       }
@@ -24,7 +25,7 @@ export class Renderer {
 
   drawTetromino(tetromino: Tetromino): void {
     const shape = tetromino.getShape();
-    const color = 'red'; // Placeholder color
+    const color = tetromino.getColor();
 
     this.ctx.fillStyle = color;
     for (let y = 0; y < shape.length; y++) {
@@ -56,7 +57,7 @@ export class Renderer {
 
   drawNextTetromino(tetromino: Tetromino, offsetX: number, offsetY: number): void {
     const shape = tetromino.getShape();
-    const color = 'blue'; // Placeholder color
+    const color = tetromino.getColor();
 
     this.ctx.fillStyle = color;
     for (let y = 0; y < shape.length; y++) {
@@ -75,7 +76,7 @@ export class Renderer {
 
   drawHoldTetromino(tetromino: Tetromino, offsetX: number, offsetY: number): void {
     const shape = tetromino.getShape();
-    const color = 'green'; // Placeholder color
+    const color = tetromino.getColor();
 
     this.ctx.fillStyle = color;
     for (let y = 0; y < shape.length; y++) {
@@ -106,6 +107,13 @@ export class Renderer {
     this.ctx.fillText(`High Score: ${highScore}`, 10, 60);
   }
 
+  drawLevel(level: number): void {
+    this.ctx.fillStyle = 'white';
+    this.ctx.font = '20px Arial';
+    this.ctx.textAlign = 'left';
+    this.ctx.fillText(`Level: ${level}`, 10, 90);
+  }
+
   drawGhostTetromino(tetromino: Tetromino, ghostY: number): void {
     const shape = tetromino.getShape();
     const color = 'rgba(255, 255, 255, 0.3)'; // Transparent white
@@ -125,3 +133,4 @@ export class Renderer {
     }
   }
 }
+
