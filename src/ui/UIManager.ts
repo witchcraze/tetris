@@ -11,6 +11,7 @@ export class UIManager {
     private backgroundPreview: HTMLImageElement;
     private tetrominoSkinSelect: HTMLSelectElement; // Add new property
     private renderer: Renderer; // Add renderer property
+    private mainMenuElement: HTMLElement; // Add mainMenuElement
 
     constructor(game: Game, renderer: Renderer) {
         this.scoreElement = document.getElementById("score")!;
@@ -22,11 +23,12 @@ export class UIManager {
         this.backgroundPreview = document.getElementById("backgroundPreview") as HTMLImageElement;
         this.tetrominoSkinSelect = document.getElementById("tetrominoSkinSelect") as HTMLSelectElement; // Get new element
         this.renderer = renderer; // Assign renderer
+        this.mainMenuElement = document.getElementById("mainMenu")!; // Get mainMenuElement
 
         this.startButton.addEventListener("click", () => {
             game.start();
             this.hideGameOver();
-            this.startButton.style.display = "none";
+            this.hideMainMenu(); // Hide main menu on game start
         });
 
         this.backgroundImageInput.addEventListener("change", (event) => {
@@ -74,6 +76,15 @@ export class UIManager {
     }
 
     public showStartButton(): void {
-        this.startButton.style.display = "block";
+        // This button is now part of the main menu, so its display is handled by showMainMenu/hideMainMenu
     }
-}
+
+    public showMainMenu(): void {
+        this.mainMenuElement.style.display = "flex"; // Use flex to center content
+        document.getElementById("game-container")!.style.display = "none"; // Hide game container
+    }
+
+    public hideMainMenu(): void {
+        this.mainMenuElement.style.display = "none";
+        document.getElementById("game-container")!.style.display = "flex"; // Show game container
+    }
