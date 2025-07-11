@@ -9,6 +9,7 @@ export class UIManager {
     private gameOverElement: HTMLElement;
     private backgroundImageInput: HTMLInputElement;
     private backgroundPreview: HTMLImageElement;
+    private tetrominoSkinSelect: HTMLSelectElement; // Add new property
     private renderer: Renderer; // Add renderer property
 
     constructor(game: Game, renderer: Renderer) {
@@ -19,6 +20,7 @@ export class UIManager {
         this.gameOverElement = document.getElementById("gameOver")!;
         this.backgroundImageInput = document.getElementById("backgroundImageInput") as HTMLInputElement;
         this.backgroundPreview = document.getElementById("backgroundPreview") as HTMLImageElement;
+        this.tetrominoSkinSelect = document.getElementById("tetrominoSkinSelect") as HTMLSelectElement; // Get new element
         this.renderer = renderer; // Assign renderer
 
         this.startButton.addEventListener("click", () => {
@@ -43,6 +45,11 @@ export class UIManager {
                 this.backgroundPreview.style.display = "none";
                 this.renderer.setBackgroundImage(null); // Clear background image
             }
+        });
+
+        this.tetrominoSkinSelect.addEventListener("change", (event) => {
+            const selectedSkin = (event.target as HTMLSelectElement).value;
+            game.setTetrominoSkin(selectedSkin); // Call a new method in Game.ts
         });
     }
 

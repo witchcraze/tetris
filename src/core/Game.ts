@@ -16,6 +16,15 @@ export class Game {
   private tetrominoTypes = ['I', 'J', 'L', 'O', 'S', 'T', 'Z'];
   private onLineClearCallback: ((lines: number) => void) | null = null;
   private onLevelUpCallback: ((level: number) => void) | null = null;
+  private currentSkin: { [key: string]: string } = {
+    'I': 'cyan',
+    'J': 'blue',
+    'L': 'orange',
+    'O': 'yellow',
+    'S': 'lime',
+    'T': 'purple',
+    'Z': 'red',
+  }; // Default skin
 
   constructor(
     boardWidth: number,
@@ -29,6 +38,56 @@ export class Game {
     }
     if (onLevelUp) {
       this.onLevelUpCallback = onLevelUp;
+    }
+  }
+
+  public setTetrominoSkin(skinName: string): void {
+    // In a real scenario, you would load skin data from a predefined set
+    // For now, we'll use a simple mapping or assume skinName is a color
+    switch (skinName) {
+      case 'default':
+        this.currentSkin = {
+          'I': 'cyan',
+          'J': 'blue',
+          'L': 'orange',
+          'O': 'yellow',
+          'S': 'lime',
+          'T': 'purple',
+          'Z': 'red',
+        };
+        break;
+      case 'grayscale':
+        this.currentSkin = {
+          'I': '#808080',
+          'J': '#808080',
+          'L': '#808080',
+          'O': '#808080',
+          'S': '#808080',
+          'T': '#808080',
+          'Z': '#808080',
+        };
+        break;
+      // Add more cases for different skins
+      default:
+        // Assume skinName is a single color to apply to all
+        this.currentSkin = {
+          'I': skinName,
+          'J': skinName,
+          'L': skinName,
+          'O': skinName,
+          'S': skinName,
+          'T': skinName,
+          'Z': skinName,
+        };
+        break;
+    }
+    // Re-apply skin to current and next tetrominos if they exist
+    if (this.currentTetromino) {
+      this.currentTetromino = new Tetromino(this.currentTetromino.x, this.currentTetromino.y, this.currentTetromino.getType(), this.currentSkin);
+    }
+    this.nextTetrominos = this.nextTetrominos.map(t => new Tetromino(t.x, t.y, t.getType(), this.currentSkin));
+    if (this.holdTetromino) {
+      this.holdTetromino = new Tetromino(this.holdTetromino.x, this.holdTetromino.y, this.holdTetromino.getType(), this.currentSkin);
     }
   }
 
@@ -114,7 +173,7 @@ export class Game {
 
   private generateRandomTetromino(): Tetromino {
     const randomType = this.tetrominoTypes[Math.floor(Math.random() * this.tetrominoTypes.length)];
-    return new Tetromino(Math.floor(this.board.width / 2) - 2, 0, randomType);
+    return new Tetromino(Math.floor(this.board.width / 2) - 2, 0, randomType, this.currentSkin);
   }
 
   handleInput(key: string): void {

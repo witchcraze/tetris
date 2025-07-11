@@ -85,7 +85,7 @@ export class Renderer {
 
   drawTetromino(tetromino: Tetromino): void {
     const shape = tetromino.getShape();
-    const color = tetromino.getColor();
+    const color = tetromino.getSkinColor(); // Use getSkinColor()
 
     this.gameCtx.fillStyle = color;
     for (let y = 0; y < shape.length; y++) {
@@ -129,7 +129,7 @@ export class Renderer {
     let currentOffsetY = 0; // Start from top of nextCanvas
     for (const tetromino of tetrominos) {
       const shape = tetromino.getShape();
-      const color = tetromino.getColor();
+      const color = tetromino.getSkinColor(); // Use getSkinColor()
 
       this.nextCtx.fillStyle = color;
       for (let y = 0; y < shape.length; y++) {
@@ -151,7 +151,7 @@ export class Renderer {
   drawHoldTetromino(tetromino: Tetromino): void {
     this.clearHoldCanvas(); // Clear before drawing
     const shape = tetromino.getShape();
-    const color = tetromino.getColor();
+    const color = tetromino.getSkinColor(); // Use getSkinColor()
 
     this.holdCtx.fillStyle = color;
     for (let y = 0; y < shape.length; y++) {

@@ -3,14 +3,14 @@ export class Tetromino {
   public y: number;
   private shape: number[][];
   private type: string;
-  private color: string;
+  private skin: { [key: string]: string }; // Add skin property
 
-  constructor(x: number, y: number, type: string) {
+  constructor(x: number, y: number, type: string, skin: { [key: string]: string }) {
     this.x = x;
     this.y = y;
     this.type = type;
     this.shape = this.getInitialShape(type);
-    this.color = this.getColorForType(type);
+    this.skin = skin; // Assign skin
   }
 
   private getInitialShape(type: string): number[][] {
@@ -34,21 +34,8 @@ export class Tetromino {
     }
   }
 
-  private getColorForType(type: string): string {
-    switch (type) {
-      case 'I': return 'cyan';
-      case 'J': return 'blue';
-      case 'L': return 'orange';
-      case 'O': return 'yellow';
-      case 'S': return 'lime';
-      case 'T': return 'purple';
-      case 'Z': return 'red';
-      default: return 'gray';
-    }
-  }
-
-  getColor(): string {
-    return this.color;
+  getSkinColor(): string {
+    return this.skin[this.type] || 'gray'; // Return color based on skin
   }
 
   move(dx: number, dy: number): void {
