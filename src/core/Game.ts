@@ -5,7 +5,7 @@ import { LocalStorageManager } from '../utils/LocalStorageManager';
 export class Game {
   public board: Board;
   public currentTetromino: Tetromino | null = null; // Made public for now for easier access in index.ts
-  public nextTetromino: Tetromino | null = null; // Made public for easier access in index.ts
+  public nextTetrominos: Tetromino[] = []; // Made public for easier access in index.ts
   public holdTetromino: Tetromino | null = null; // Made public for easier access in index.ts
   private canHold: boolean = true;
   private score: number = 0;
@@ -27,7 +27,10 @@ export class Game {
     this.board.clear();
     this.holdTetromino = null;
     this.canHold = true;
-    this.nextTetromino = this.generateRandomTetromino();
+    this.nextTetrominos = []; // Initialize as empty array
+    for (let i = 0; i < 3; i++) { // Generate 3 next tetrominos
+      this.nextTetrominos.push(this.generateRandomTetromino());
+    }
     this.spawnTetromino();
   }
 
@@ -81,8 +84,8 @@ export class Game {
   }
 
   spawnTetromino(): void {
-    this.currentTetromino = this.nextTetromino;
-    this.nextTetromino = this.generateRandomTetromino();
+    this.currentTetromino = this.nextTetrominos.shift() || null; // Get the first tetromino from the queue
+    this.nextTetrominos.push(this.generateRandomTetromino()); // Add a new tetromino to the end of the queue
 
     if (this.currentTetromino && this.board.checkCollision(this.currentTetromino, this.currentTetromino.x, this.currentTetromino.y)) {
       this.gameOver = true;

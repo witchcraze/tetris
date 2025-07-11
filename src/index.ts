@@ -8,7 +8,7 @@ const BOARD_HEIGHT = 20;
 const CELL_SIZE = 20;
 
 const game = new Game(BOARD_WIDTH, BOARD_HEIGHT);
-const renderer = new Renderer('tetrisCanvas', CELL_SIZE);
+const renderer = new Renderer('tetrisCanvas', 'nextCanvas', 'holdCanvas', CELL_SIZE);
 const uiManager = new UIManager(game);
 
 let lastTime = 0;
@@ -28,7 +28,7 @@ function gameLoop(currentTime: number) {
     lastTime = currentTime;
   }
 
-  renderer.clearCanvas();
+  renderer.clearGameCanvas();
   renderer.drawBoard(game.board);
   if (game.currentTetromino) {
     const ghostPosition = game.getGhostTetrominoPosition();
@@ -37,16 +37,16 @@ function gameLoop(currentTime: number) {
     }
     renderer.drawTetromino(game.currentTetromino);
   }
-  if (game.nextTetromino) {
-    renderer.drawNextTetromino(game.nextTetromino, BOARD_WIDTH + 2, 0); // Adjust position as needed
+  if (game.nextTetrominos.length > 0) {
+    renderer.drawNextTetrominos(game.nextTetrominos);
   }
   if (game.holdTetromino) {
-    renderer.drawHoldTetromino(game.holdTetromino, -5, 0); // Adjust position as needed
+    renderer.drawHoldTetromino(game.holdTetromino);
   }
 
   uiManager.updateScore(game.getScore());
-  renderer.drawHighScore(game.getHighScore());
-  renderer.drawLevel(game.getLevel());
+  uiManager.updateHighScore(game.getHighScore());
+  uiManager.updateLevel(game.getLevel());
 
   requestAnimationFrame(gameLoop);
 }

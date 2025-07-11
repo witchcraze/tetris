@@ -1,5 +1,14 @@
-
 issue_body.md
 issue_comment_body.md
 pr_body.md
 self_review_comment.md
+
+# Temporary issue body files
+issue_body_*.md
+implementation_plan_comment.md
+
+# Node modules
+node_modules/
+
+# Test output/generated files
+tests/graphics/
