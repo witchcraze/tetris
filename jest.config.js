@@ -2,4 +2,5 @@
 module.exports = {
   preset: 'ts-jest',
   testEnvironment: 'jsdom',
+  setupFilesAfterEnv: ['jest-canvas-mock'], // Add this line
 };

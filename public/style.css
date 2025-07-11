@@ -10,7 +10,57 @@ body {
     font-family: sans-serif;
 }
 
+#game-container {
+    display: flex;
+    gap: 20px; /* Space between game canvas and UI */
+}
+
 canvas {
     border: 2px solid #eee;
     background-color: #000;
+}
+
+#game-ui {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 150px; /* Adjust as needed */
+}
+
+#next-container, #hold-container {
+    border: 1px solid #555;
+    padding: 5px;
+    background-color: #333;
+    text-align: center;
+}
+
+#nextCanvas, #holdCanvas {
+    background-color: #000;
+    border: 1px solid #444;
+}
+
+#score, #highScore, #level {
+    font-size: 1.2em;
+    margin-bottom: 5px;
+}
+
+#startButton {
+    padding: 10px 20px;
+    font-size: 1.2em;
+    cursor: pointer;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+}
+
+#startButton:hover {
+    background-color: #45a049;
+}
+
+#gameOver {
+    font-size: 2em;
+    color: red;
+    text-align: center;
+    margin-top: 20px;
 }

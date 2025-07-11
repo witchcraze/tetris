@@ -75,4 +75,8 @@ export class Tetromino {
   setShape(newShape: number[][]): void {
     this.shape = newShape;
   }
+
+  getType(): string {
+    return this.type;
+  }
 }
