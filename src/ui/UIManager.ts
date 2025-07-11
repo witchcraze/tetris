@@ -1,4 +1,5 @@
 import { Game } from "../core/Game";
+import { Renderer } from "../graphics/Renderer";
 
 export class UIManager {
     private scoreElement: HTMLElement;
@@ -6,18 +7,42 @@ export class UIManager {
     private levelElement: HTMLElement;
     private startButton: HTMLButtonElement;
     private gameOverElement: HTMLElement;
+    private backgroundImageInput: HTMLInputElement;
+    private backgroundPreview: HTMLImageElement;
+    private renderer: Renderer; // Add renderer property
 
-    constructor(game: Game) {
+    constructor(game: Game, renderer: Renderer) {
         this.scoreElement = document.getElementById("score")!;
         this.highScoreElement = document.getElementById("highScore")!;
         this.levelElement = document.getElementById("level")!;
         this.startButton = document.getElementById("startButton") as HTMLButtonElement;
         this.gameOverElement = document.getElementById("gameOver")!;
+        this.backgroundImageInput = document.getElementById("backgroundImageInput") as HTMLInputElement;
+        this.backgroundPreview = document.getElementById("backgroundPreview") as HTMLImageElement;
+        this.renderer = renderer; // Assign renderer
 
         this.startButton.addEventListener("click", () => {
             game.start();
             this.hideGameOver();
             this.startButton.style.display = "none";
+        });
+
+        this.backgroundImageInput.addEventListener("change", (event) => {
+            const file = (event.target as HTMLInputElement).files?.[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const imageUrl = e.target?.result as string;
+                    this.backgroundPreview.src = imageUrl;
+                    this.backgroundPreview.style.display = "block";
+                    this.renderer.setBackgroundImage(imageUrl); // Pass image URL to renderer
+                };
+                reader.readAsDataURL(file);
+            } else {
+                this.backgroundPreview.src = "";
+                this.backgroundPreview.style.display = "none";
+                this.renderer.setBackgroundImage(null); // Clear background image
+            }
         });
     }
 
