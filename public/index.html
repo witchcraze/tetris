@@ -8,7 +8,11 @@
 </head>
 <body>
     <h1>Tetris Game</h1>
-    <div id="game-container">
+    <div id="mainMenu" style="display: block;">
+        <h2>Welcome to Tetris!</h2>
+        <button id="startButton">Start Game</button>
+    </div>
+    <div id="game-container" style="display: none;">
         <canvas id="tetrisCanvas" width="200" height="400"></canvas>
         <div id="game-ui">
             <div id="score">Score: 0</div>
@@ -21,13 +25,6 @@
             <div id="hold-container">
                 <h3>HOLD</h3>
                 <canvas id="holdCanvas" width="80" height="80"></canvas>
-            </div>
-            <button id="startButton">Start Game</button>
-            <div id="gameOver" style="display: none;">Game Over!</div>
-            <div id="background-settings">
-                <h3>Background Image</h3>
-                <input type="file" id="backgroundImageInput" accept="image/*">
-                <img id="backgroundPreview" src="" alt="Background Preview" style="max-width: 100px; max-height: 100px; display: none;">
             </div>
             <div id="tetromino-skin-settings">
                 <h3>Tetromino Skin</h3>

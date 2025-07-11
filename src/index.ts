@@ -33,7 +33,7 @@ let lastTime = 0;
 function gameLoop(currentTime: number) {
   if (game.isGameOver()) {
     uiManager.showGameOver();
-    uiManager.showStartButton();
+    uiManager.showMainMenu(); // Show main menu on game over
     return; // Stop the game loop
   }
 
@@ -75,7 +75,7 @@ document.addEventListener('keydown', (event) => {
   if (game.isGameOver() && event.key === 'r') {
     game.start();
     uiManager.hideGameOver();
-    uiManager.showStartButton(); // Hide start button on game start
+    uiManager.hideMainMenu(); // Hide main menu on game start
     gameLoop(0);
   } else {
     if (event.key === ' ') {
@@ -87,4 +87,4 @@ document.addEventListener('keydown', (event) => {
 });
 
 // Initial setup
-uiManager.showStartButton();
+uiManager.showMainMenu(); // Show main menu initially
