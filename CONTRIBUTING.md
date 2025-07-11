@@ -1,41 +1,21 @@
 # Contributing to Tetris
 
-We welcome contributions to the Tetris project! Here are some guidelines to help you get started.
+We welcome contributions to the Tetris project! Please read our [Detailed Contribution Guidelines](docs/07_CONTRIBUTION_GUIDELINES.md) for a comprehensive guide on how to contribute.
 
-## How to Contribute
+## Quick Start
 
-1.  **Fork the repository:** Start by forking the Tetris repository to your GitHub account.
-2.  **Clone your fork:** Clone your forked repository to your local machine.
-    ```bash
-    git clone https://github.com/YOUR_USERNAME/tetris.git
-    cd tetris
-    ```
-3.  **Create a new branch:** Create a new branch for your feature or bug fix. Use a descriptive name.
-    ```bash
-    git checkout -b feature/your-feature-name
-    # or
-    git checkout -b bugfix/your-bug-fix
-    ```
-4.  **Make your changes:** Implement your feature or fix the bug. Ensure your code adheres to the project's coding standards.
-5.  **Test your changes:** Run the existing tests and add new tests for your changes if applicable.
-    ```bash
-    npm test
-    ```
-6.  **Commit your changes:** Write clear and concise commit messages.
-    ```bash
-    git commit -m "feat: Add new feature"
-    # or
-    git commit -m "fix: Fix bug in X"
-    ```
-7.  **Push to your fork:** Push your changes to your forked repository.
-    ```bash
-    git push origin feature/your-feature-name
-    ```
-8.  **Create a Pull Request:** Open a Pull Request from your branch to the `main` branch of the original Tetris repository. Fill out the Pull Request template with all the necessary details.
+Here's a quick overview of the contribution process:
+
+1.  **Fork and Clone:** Fork the repository and clone it to your local machine.
+2.  **Set up Environment:** Install dependencies (`npm install`) and ensure the project runs locally (`npm start`).
+3.  **Create a Branch:** Create a new branch for your feature or bug fix, following our naming conventions (e.g., `feature/your-feature-name`).
+4.  **Implement and Test:** Make your changes, ensuring they adhere to our [Code Style](#code-style) and are covered by tests.
+5.  **Commit:** Write clear, [Conventional Commits](https://www.conventionalcommits.org/) compliant commit messages.
+6.  **Push and PR:** Push your changes to your fork and open a Pull Request to the `main` branch.
 
 ## Code Style
 
-We use ESLint and Prettier for code formatting and linting. Please ensure your code passes linting checks before submitting a Pull Request.
+We use ESLint and Prettier for code formatting and linting. Please ensure your code passes linting checks before submitting a Pull Request. Refer to [docs/02_CODING_STANDARDS.md](docs/02_CODING_STANDARDS.md) for detailed coding standards.
 
 ```bash
 npm run lint
