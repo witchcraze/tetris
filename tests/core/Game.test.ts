@@ -18,11 +18,26 @@ Object.defineProperty(window, 'localStorage', { value: localStorageMock });
 
 describe('Game', () => {
   let game: Game;
+  let mockTetrominoIndex: number;
+  const mockTetrominoSequence = ['I', 'J', 'L', 'O', 'S', 'T', 'Z', 'I', 'J', 'L', 'O', 'S', 'T', 'Z'];
 
   beforeEach(() => {
-    localStorage.clear(); // Clear localStorage before each test
+    mockTetrominoIndex = 0; // Reset for each test
+    localStorageMock.clear();
     game = new Game(10, 20);
-    game.start();
+
+    // Mock the generateRandomTetromino method directly on the game instance
+    jest.spyOn(game as any, 'generateRandomTetromino').mockImplementation(() => {
+      const type = mockTetrominoSequence[mockTetrominoIndex % mockTetrominoSequence.length];
+      mockTetrominoIndex++;
+      return new Tetromino(Math.floor(game.board.width / 2) - 2, 0, type);
+    });
+
+    game.start(); // Start the game for each test
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks(); // Clean up mocks after each test
   });
 
   it('should initialize score to 0', () => {
@@ -82,16 +97,16 @@ describe('Game', () => {
   it('should add score for hard drop (no line clear)', () => {
     game.currentTetromino = new Tetromino(0, 0, 'I'); // Start at top
     const initialY = game.currentTetromino.y;
-    const ghostY = game.getGhostTetrominoPosition()?.y || 0; // Get the expected final Y
+    const ghostY = game.getGhostTetrominoPosition()?.y || 0;
     game.hardDrop();
     const distanceDropped = ghostY - initialY;
-    expect(game.getScore()).toBe(distanceDropped * 2); // Should be 36
+    expect(game.getScore()).toBe(distanceDropped * 2);
   });
 
   it('getGhostTetrominoPosition should return correct ghostY', () => {
-    game.currentTetromino = new Tetromino(0, 0, 'I'); // Start at top
+    game.currentTetromino = new Tetromino(0, 0, 'I');
     const ghostPosition = game.getGhostTetrominoPosition();
-    expect(ghostPosition?.y).toBe(18); // Should drop to y=18
+    expect(ghostPosition?.y).toBe(18);
   });
 
   // High Score Tests
@@ -101,19 +116,19 @@ describe('Game', () => {
 
   it('should load high score from localStorage on start', () => {
     localStorage.setItem('highScore', '1000');
-    game = new Game(10, 20); // Re-initialize game to load from localStorage
+    game = new Game(10, 20);
     game.start();
     expect(game.getHighScore()).toBe(1000);
   });
 
   it('should update high score if current score is greater than high score on game over', () => {
-    game['score'] = 500; // Manually set current score
-    game['gameOver'] = true; // Manually set game over
-    game.isGameOver(); // Trigger high score update
+    game['score'] = 500;
+    game['gameOver'] = true;
+    game.isGameOver();
     expect(game.getHighScore()).toBe(500);
     expect(localStorage.getItem('highScore')).toBe('500');
 
-    game = new Game(10, 20); // New game, should load 500 as high score
+    game = new Game(10, 20);
     game.start();
     game['score'] = 1000;
     game['gameOver'] = true;
@@ -125,7 +140,7 @@ describe('Game', () => {
   it('should not update high score if current score is less than high score on game over', () => {
     localStorage.setItem('highScore', '1000');
     game = new Game(10, 20);
-    game.start(); // High score is 1000
+    game.start();
     game['score'] = 500;
     game['gameOver'] = true;
     game.isGameOver();
@@ -136,7 +151,7 @@ describe('Game', () => {
   it('should not update high score if current score is equal to high score on game over', () => {
     localStorage.setItem('highScore', '500');
     game = new Game(10, 20);
-    game.start(); // High score is 500
+    game.start();
     game['score'] = 500;
     game['gameOver'] = true;
     game.isGameOver();
@@ -150,32 +165,71 @@ describe('Game', () => {
   });
 
   it('should increase level based on score', () => {
-    // Simulate score to reach level 2
-    game['score'] = 900; // Set score before line clear
-    game.currentTetromino = new Tetromino(0, 0, 'I'); // Place at top
-    fillLine(19); // Fill a line
-    game.hardDrop(); // This will add 100 (line clear) + 36 (hard drop) = 136. Total score = 900 + 136 = 1036
+    game['score'] = 900;
+    game.currentTetromino = new Tetromino(0, 0, 'I');
+    fillLine(19);
+    game.hardDrop();
     expect(game.getLevel()).toBe(2);
 
-    // Simulate score to reach level 3
-    game['score'] = 1900; // Set score before line clear
-    game.currentTetromino = new Tetromino(0, 0, 'I'); // Place at top
-    fillLine(19); // Fill a line
-    game.hardDrop(); // This will add 100 (line clear) + 36 (hard drop) = 136. Total score = 1900 + 136 = 2036
+    game['score'] = 1900;
+    game.currentTetromino = new Tetromino(0, 0, 'I');
+    fillLine(19);
+    game.hardDrop();
     expect(game.getLevel()).toBe(3);
   });
 
   it('should return correct drop speed based on level', () => {
     game['level'] = 1;
-    expect(game.getDropSpeed()).toBe(500); // 500 - (1-1)*50 = 500
+    expect(game.getDropSpeed()).toBe(500);
 
     game['level'] = 2;
-    expect(game.getDropSpeed()).toBe(450); // 500 - (2-1)*50 = 450
+    expect(game.getDropSpeed()).toBe(450);
 
     game['level'] = 10;
-    expect(game.getDropSpeed()).toBe(50); // 500 - (10-1)*50 = 50. Capped at 50.
+    expect(game.getDropSpeed()).toBe(50);
 
     game['level'] = 11;
-    expect(game.getDropSpeed()).toBe(50); // 500 - (11-1)*50 = 0. Capped at 50.
+    expect(game.getDropSpeed()).toBe(50);
+  });
+
+  it('should initialize nextTetrominos with 3 tetrominos on start', () => {
+    expect(game.nextTetrominos).toHaveLength(3);
+    expect(game.nextTetrominos[0]).toBeInstanceOf(Tetromino);
+    expect(game.nextTetrominos[1]).toBeInstanceOf(Tetromino);
+    expect(game.nextTetrominos[2]).toBeInstanceOf(Tetromino);
+  });
+
+  it('spawnTetromino should shift current and add new to nextTetrominos', () => {
+    const initialNextTetrominos = game.nextTetrominos.map(t => t.getType());
+    const initialCurrentTetrominoType = game.currentTetromino?.getType();
+
+    game.spawnTetromino();
+
+    expect(game.currentTetromino?.getType()).toEqual(initialNextTetrominos[0]);
+    expect(game.nextTetrominos).toHaveLength(3);
+    expect(game.nextTetrominos[0].getType()).toEqual(initialNextTetrominos[1]);
+    expect(game.nextTetrominos[1].getType()).toEqual(initialNextTetrominos[2]);
+    expect(game.nextTetrominos[2]).toBeInstanceOf(Tetromino);
+  });
+
+  it('should handle holdTetromino swap correctly with nextTetrominos', () => {
+    const initialCurrentType = game.currentTetromino?.getType();
+    const initialNextTetrominosTypes = game.nextTetrominos.map(t => t.getType());
+
+    // First hold: current goes to hold, next becomes current
+    game.handleInput('c');
+    expect(game.holdTetromino?.getType()).toEqual(initialCurrentType);
+
+    const nextTetrominosTypesAfterFirstHold = game.nextTetrominos.map(t => t.getType());
+    const currentTetrominoAfterFirstHold = game.currentTetromino; // Keep the object reference
+
+    // Manually allow holding again for the test
+    game['canHold'] = true; // Access private property for testing
+
+    // Second hold: held goes to current, current goes to held
+    game.handleInput('c');
+    expect(game.holdTetromino?.getType()).toEqual(currentTetrominoAfterFirstHold?.getType());
+    expect(game.currentTetromino?.getType()).toEqual(initialCurrentType);
+    expect(game.nextTetrominos.map(t => t.getType())).toEqual(nextTetrominosTypesAfterFirstHold);
   });
 });
