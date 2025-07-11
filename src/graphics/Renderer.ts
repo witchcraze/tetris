@@ -9,6 +9,9 @@ export class Renderer {
   private holdCanvas: HTMLCanvasElement;
   private holdCtx: CanvasRenderingContext2D;
   private cellSize: number;
+  private lineClearAnimationStartTime: number | null = null;
+  private lineClearAnimationLines: number[] = [];
+  private levelUpAnimationStartTime: number | null = null;
 
   constructor(gameCanvasId: string, nextCanvasId: string, holdCanvasId: string, cellSize: number) {
     this.gameCanvas = document.getElementById(gameCanvasId) as HTMLCanvasElement;
@@ -21,11 +24,41 @@ export class Renderer {
   }
 
   drawBoard(board: Board): void {
+    const now = performance.now();
+    const animationDuration = 200; // ms
+
     for (let y = 0; y < board.height; y++) {
       for (let x = 0; x < board.width; x++) {
-        if (board.grid[y][x] !== null) {
-          this.gameCtx.fillStyle = board.grid[y][x] as string;
-          this.gameCtx.fillRect(x * this.cellSize, y * this.cellSize, this.cellSize, this.cellSize);
+        // Line clear animation
+        if (this.lineClearAnimationStartTime !== null && this.lineClearAnimationLines.includes(y)) {
+          const elapsed = now - this.lineClearAnimationStartTime;
+          if (elapsed < animationDuration) {
+            // Flash effect: alternate between clear and filled
+            if (Math.floor(elapsed / 50) % 2 === 0) {
+              this.gameCtx.fillStyle = 'white'; // Flash color
+              this.gameCtx.fillRect(x * this.cellSize, y * this.cellSize, this.cellSize, this.cellSize);
+            } else {
+              // Draw original block or clear
+              if (board.grid[y][x] !== null) {
+                this.gameCtx.fillStyle = board.grid[y][x] as string;
+                this.gameCtx.fillRect(x * this.cellSize, y * this.cellSize, this.cellSize, this.cellSize);
+              } else {
+                this.gameCtx.clearRect(x * this.cellSize, y * this.cellSize, this.cellSize, this.cellSize);
+              }
+            }
+          } else {
+            // Animation finished, reset
+            this.lineClearAnimationStartTime = null;
+            this.lineClearAnimationLines = [];
+          }
+        } else {
+          // Normal drawing
+          if (board.grid[y][x] !== null) {
+            this.gameCtx.fillStyle = board.grid[y][x] as string;
+            this.gameCtx.fillRect(x * this.cellSize, y * this.cellSize, this.cellSize, this.cellSize);
+          } else {
+            this.gameCtx.clearRect(x * this.cellSize, y * this.cellSize, this.cellSize, this.cellSize);
+          }
         }
       }
     }
@@ -143,6 +176,38 @@ export class Renderer {
           );
         }
       }
+    }
+  }
+
+  public triggerLineClearAnimation(lines: number[]): void {
+    this.lineClearAnimationLines = lines;
+    this.lineClearAnimationStartTime = performance.now();
+  }
+
+  public triggerLevelUpAnimation(): void {
+    this.levelUpAnimationStartTime = performance.now();
+  }
+
+  public drawLevelUpAnimation(): void {
+    if (this.levelUpAnimationStartTime === null) return;
+
+    const now = performance.now();
+    const animationDuration = 1000; // 1 second
+    const elapsed = now - this.levelUpAnimationStartTime;
+
+    if (elapsed < animationDuration) {
+      this.gameCtx.save();
+      this.gameCtx.fillStyle = 'rgba(255, 255, 255, ' + (1 - elapsed / animationDuration) * 0.5 + ')'; // Fading white flash
+      this.gameCtx.fillRect(0, 0, this.gameCanvas.width, this.gameCanvas.height);
+
+      this.gameCtx.fillStyle = 'white';
+      this.gameCtx.font = 'bold 60px Arial';
+      this.gameCtx.textAlign = 'center';
+      this.gameCtx.textBaseline = 'middle';
+      this.gameCtx.fillText('LEVEL UP!', this.gameCanvas.width / 2, this.gameCanvas.height / 2);
+      this.gameCtx.restore();
+    } else {
+      this.levelUpAnimationStartTime = null;
     }
   }
 }

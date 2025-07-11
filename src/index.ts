@@ -7,7 +7,24 @@ const BOARD_WIDTH = 10;
 const BOARD_HEIGHT = 20;
 const CELL_SIZE = 20;
 
-const game = new Game(BOARD_WIDTH, BOARD_HEIGHT);
+const game = new Game(
+  BOARD_WIDTH,
+  BOARD_HEIGHT,
+  (linesCleared: number) => {
+    // Logic to get the actual cleared line indices from the board if needed
+    // For now, we'll just pass the number of lines cleared.
+    // A more robust solution would involve passing the actual row indices from Board.ts
+    // For a simple visual effect, we can assume the bottom-most cleared lines.
+    const clearedLineIndices: number[] = [];
+    for (let i = 0; i < linesCleared; i++) {
+      clearedLineIndices.push(BOARD_HEIGHT - 1 - i); // Assuming lines are cleared from bottom up
+    }
+    renderer.triggerLineClearAnimation(clearedLineIndices);
+  },
+  (level: number) => {
+    renderer.triggerLevelUpAnimation();
+  }
+);
 const renderer = new Renderer('tetrisCanvas', 'nextCanvas', 'holdCanvas', CELL_SIZE);
 const uiManager = new UIManager(game);
 
@@ -47,6 +64,8 @@ function gameLoop(currentTime: number) {
   uiManager.updateScore(game.getScore());
   uiManager.updateHighScore(game.getHighScore());
   uiManager.updateLevel(game.getLevel());
+
+  renderer.drawLevelUpAnimation(); // Draw level up animation if active
 
   requestAnimationFrame(gameLoop);
 }
