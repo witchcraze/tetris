@@ -38,7 +38,7 @@ export class Board {
     for (let y = 0; y < shape.length; y++) {
       for (let x = 0; x < shape[y].length; x++) {
         if (shape[y][x] !== 0) {
-          this.grid[tetromino.y + y][tetromino.x + x] = tetromino.getColor(); // Store the color
+          this.grid[tetromino.y + y][tetromino.x + x] = tetromino.getSkinColor(); // Store the color
         }
       }
     }
