@@ -12,6 +12,7 @@ export class Renderer {
   private lineClearAnimationStartTime: number | null = null;
   private lineClearAnimationLines: number[] = [];
   private levelUpAnimationStartTime: number | null = null;
+  private backgroundImage: HTMLImageElement | null = null;
 
   constructor(gameCanvasId: string, nextCanvasId: string, holdCanvasId: string, cellSize: number) {
     this.gameCanvas = document.getElementById(gameCanvasId) as HTMLCanvasElement;
@@ -21,6 +22,24 @@ export class Renderer {
     this.holdCanvas = document.getElementById(holdCanvasId) as HTMLCanvasElement;
     this.holdCtx = this.holdCanvas.getContext('2d')!;
     this.cellSize = cellSize;
+  }
+
+  public setBackgroundImage(imageUrl: string | null): void {
+    if (imageUrl) {
+      this.backgroundImage = new Image();
+      this.backgroundImage.src = imageUrl;
+      this.backgroundImage.onload = () => {
+        // Image loaded, force redraw if necessary
+      };
+    } else {
+      this.backgroundImage = null;
+    }
+  }
+
+  private drawBackground(): void {
+    if (this.backgroundImage) {
+      this.gameCtx.drawImage(this.backgroundImage, 0, 0, this.gameCanvas.width, this.gameCanvas.height);
+    }
   }
 
   drawBoard(board: Board): void {
@@ -85,6 +104,7 @@ export class Renderer {
 
   clearGameCanvas(): void {
     this.gameCtx.clearRect(0, 0, this.gameCanvas.width, this.gameCanvas.height);
+    this.drawBackground(); // Draw background after clearing
   }
 
   clearNextCanvas(): void {

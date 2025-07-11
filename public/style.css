@@ -64,3 +64,19 @@ canvas {
     text-align: center;
     margin-top: 20px;
 }
+
+#background-settings {
+    margin-top: 20px;
+    padding: 10px;
+    border: 1px solid #555;
+    background-color: #333;
+}
+
+#backgroundImageInput {
+    margin-top: 5px;
+}
+
+#backgroundPreview {
+    margin-top: 10px;
+    border: 1px solid #444;
+}
