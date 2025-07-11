@@ -26,7 +26,7 @@ const game = new Game(
   }
 );
 const renderer = new Renderer('tetrisCanvas', 'nextCanvas', 'holdCanvas', CELL_SIZE);
-const uiManager = new UIManager(game);
+const uiManager = new UIManager(game, renderer);
 
 let lastTime = 0;
 
