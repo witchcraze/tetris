@@ -14,9 +14,22 @@ export class Game {
   private gameOver: boolean = false;
 
   private tetrominoTypes = ['I', 'J', 'L', 'O', 'S', 'T', 'Z'];
+  private onLineClearCallback: ((lines: number) => void) | null = null;
+  private onLevelUpCallback: ((level: number) => void) | null = null;
 
-  constructor(boardWidth: number, boardHeight: number) {
+  constructor(
+    boardWidth: number,
+    boardHeight: number,
+    onLineClear?: (lines: number) => void,
+    onLevelUp?: (level: number) => void
+  ) {
     this.board = new Board(boardWidth, boardHeight);
+    if (onLineClear) {
+      this.onLineClearCallback = onLineClear;
+    }
+    if (onLevelUp) {
+      this.onLevelUpCallback = onLevelUp;
+    }
   }
 
   start(): void {
@@ -44,6 +57,9 @@ export class Game {
       } else {
         this.board.placeTetromino(this.currentTetromino);
         const linesCleared = this.board.clearLines();
+        if (linesCleared > 0 && this.onLineClearCallback) {
+          this.onLineClearCallback(linesCleared);
+        }
         this.score += this.getScoreForLines(linesCleared);
         this.checkLevelUp();
         this.spawnTetromino();
@@ -70,6 +86,9 @@ export class Game {
     const newLevel = Math.floor(this.score / 1000) + 1;
     if (newLevel > this.level) {
       this.level = newLevel;
+      if (this.onLevelUpCallback) {
+        this.onLevelUpCallback(this.level);
+      }
     }
   }
 
