@@ -49,6 +49,10 @@ If you find a bug, please open an issue using the "Bug Report" template. Provide
 
 If you have an idea for a new feature, please open an issue using the "Feature Request" template. Describe your idea clearly and explain why you think it would be a valuable addition to the project.
 
+## Development Tools
+
+To enhance your development experience, we recommend using the tools and configurations outlined in our [Developer Tools Guide](docs/05_TOOLS.md).
+
 ## Code of Conduct
 
 We adhere to a Code of Conduct to ensure a welcoming and inclusive environment for all contributors. Please review it before contributing.
