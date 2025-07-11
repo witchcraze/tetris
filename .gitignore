@@ -6,6 +6,7 @@ self_review_comment.md
 # Temporary issue body files
 issue_body_*.md
 implementation_plan_comment.md
+issue_comment_*.md
 
 # Node modules
 node_modules/
