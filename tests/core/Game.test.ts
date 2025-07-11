@@ -30,7 +30,7 @@ describe('Game', () => {
     jest.spyOn(game as any, 'generateRandomTetromino').mockImplementation(() => {
       const type = mockTetrominoSequence[mockTetrominoIndex % mockTetrominoSequence.length];
       mockTetrominoIndex++;
-      return new Tetromino(Math.floor(game.board.width / 2) - 2, 0, type);
+      return new Tetromino(Math.floor(game.board.width / 2) - 2, 0, type, {});
     });
 
     game.start(); // Start the game for each test
@@ -54,7 +54,7 @@ describe('Game', () => {
 
   it('should add score for single line clear', () => {
     fillLine(19); // Fill the bottom line on game.board
-    const tetromino = new Tetromino(0, 18, 'I'); // Place just above the filled line
+    const tetromino = new Tetromino(0, 18, 'I', {}); // Place just above the filled line
     game.board.placeTetromino(tetromino);
     const linesCleared = game.board.clearLines();
     game['score'] += game['getScoreForLines'](linesCleared); // Manually add score
@@ -64,7 +64,7 @@ describe('Game', () => {
   it('should add score for double line clear', () => {
     fillLine(19);
     fillLine(18);
-    const tetromino = new Tetromino(0, 17, 'I'); // Place just above the filled lines
+    const tetromino = new Tetromino(0, 17, 'I', {}); // Place just above the filled lines
     game.board.placeTetromino(tetromino);
     const linesCleared = game.board.clearLines();
     game['score'] += game['getScoreForLines'](linesCleared);
@@ -75,7 +75,7 @@ describe('Game', () => {
     fillLine(19);
     fillLine(18);
     fillLine(17);
-    const tetromino = new Tetromino(0, 16, 'I'); // Place just above the filled lines
+    const tetromino = new Tetromino(0, 16, 'I', {}); // Place just above the filled lines
     game.board.placeTetromino(tetromino);
     const linesCleared = game.board.clearLines();
     game['score'] += game['getScoreForLines'](linesCleared);
@@ -87,7 +87,7 @@ describe('Game', () => {
     fillLine(18);
     fillLine(17);
     fillLine(16);
-    const tetromino = new Tetromino(0, 15, 'I'); // Place just above the filled lines
+    const tetromino = new Tetromino(0, 15, 'I', {}); // Place just above the filled lines
     game.board.placeTetromino(tetromino);
     const linesCleared = game.board.clearLines();
     game['score'] += game['getScoreForLines'](linesCleared);
@@ -95,7 +95,7 @@ describe('Game', () => {
   });
 
   it('should add score for hard drop (no line clear)', () => {
-    game.currentTetromino = new Tetromino(0, 0, 'I'); // Start at top
+    game.currentTetromino = new Tetromino(0, 0, 'I', {}); // Start at top
     const initialY = game.currentTetromino.y;
     const ghostY = game.getGhostTetrominoPosition()?.y || 0;
     game.hardDrop();
@@ -104,7 +104,7 @@ describe('Game', () => {
   });
 
   it('getGhostTetrominoPosition should return correct ghostY', () => {
-    game.currentTetromino = new Tetromino(0, 0, 'I');
+    game.currentTetromino = new Tetromino(0, 0, 'I', {});
     const ghostPosition = game.getGhostTetrominoPosition();
     expect(ghostPosition?.y).toBe(18);
   });
@@ -166,13 +166,13 @@ describe('Game', () => {
 
   it('should increase level based on score', () => {
     game['score'] = 900;
-    game.currentTetromino = new Tetromino(0, 0, 'I');
+    game.currentTetromino = new Tetromino(0, 0, 'I', {});
     fillLine(19);
     game.hardDrop();
     expect(game.getLevel()).toBe(2);
 
     game['score'] = 1900;
-    game.currentTetromino = new Tetromino(0, 0, 'I');
+    game.currentTetromino = new Tetromino(0, 0, 'I', {});
     fillLine(19);
     game.hardDrop();
     expect(game.getLevel()).toBe(3);

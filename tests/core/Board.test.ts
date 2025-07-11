@@ -16,28 +16,28 @@ describe('Board', () => {
   });
 
   it('should not collide with empty space', () => {
-    const tetromino = new Tetromino(0, 0, 'I');
+    const tetromino = new Tetromino(0, 0, 'I', {});
     expect(board.checkCollision(tetromino, 0, 1)).toBe(false); // Should not collide when moving down
   });
 
   it('should collide with bottom boundary', () => {
-    const tetromino = new Tetromino(0, 19, 'I'); // Place at the very bottom
+    const tetromino = new Tetromino(0, 19, 'I', {}); // Place at the very bottom
     expect(board.checkCollision(tetromino, 0, 20)).toBe(true); // Should collide if moving one step down
   });
 
   it('should collide with left boundary', () => {
-    const tetromino = new Tetromino(0, 0, 'I');
+    const tetromino = new Tetromino(0, 0, 'I', {});
     expect(board.checkCollision(tetromino, -1, 0)).toBe(true);
   });
 
   it('should collide with right boundary', () => {
-    const tetromino = new Tetromino(9, 0, 'I'); // Place at the very right
+    const tetromino = new Tetromino(9, 0, 'I', {}); // Place at the very right
     expect(board.checkCollision(tetromino, 10, 0)).toBe(true);
   });
 
   it('should collide with existing blocks', () => {
     board.grid[0][0] = 'test_color'; // Place a block at (0,0)
-    const tetromino = new Tetromino(0, 0, 'O'); // O-tetromino is 2x2
+    const tetromino = new Tetromino(0, 0, 'O', {}); // O-tetromino is 2x2
     expect(board.checkCollision(tetromino, 0, 0)).toBe(true); // Should collide with the existing block
   });
 });
