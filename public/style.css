@@ -76,7 +76,39 @@ canvas {
     margin-top: 5px;
 }
 
-#backgroundPreview {
-    margin-top: 10px;
-    border: 1px solid #444;
+}
+
+#mainMenu {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    font-size: 2em;
+    z-index: 100;
+}
+
+#mainMenu h2 {
+    margin-bottom: 30px;
+}
+
+#mainMenu button {
+    padding: 15px 30px;
+    font-size: 1.5em;
+    cursor: pointer;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    transition: background-color 0.3s ease;
+}
+
+#mainMenu button:hover {
+    background-color: #45a049;
 }
