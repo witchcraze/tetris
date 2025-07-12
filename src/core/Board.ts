@@ -19,11 +19,11 @@ export class Board {
           const boardX = newX + x;
           const boardY = newY + y;
 
-          // Check boundaries
+          // Check boundaries (left, right, bottom)
           if (boardX < 0 || boardX >= this.width || boardY >= this.height) {
             return true; // Collision with wall or floor
           }
-          // Check collision with existing blocks (if boardY is within bounds)
+          // Check collision with existing blocks (only if within top boundary)
           if (boardY >= 0 && this.grid[boardY][boardX] !== null) {
             return true; // Collision with existing block
           }

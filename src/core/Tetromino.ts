@@ -1,3 +1,5 @@
+import { TETROMINO_SHAPES } from '../constants';
+
 export class Tetromino {
   public x: number;
   public y: number;
@@ -9,29 +11,13 @@ export class Tetromino {
     this.x = x;
     this.y = y;
     this.type = type;
-    this.shape = this.getInitialShape(type);
+    this.shape = TETROMINO_SHAPES[type] || [];
     this.skin = skin; // Assign skin
   }
 
   private getInitialShape(type: string): number[][] {
-    switch (type) {
-      case 'I':
-        return [[0, 0, 0, 0], [1, 1, 1, 1], [0, 0, 0, 0], [0, 0, 0, 0]];
-      case 'J':
-        return [[1, 0, 0], [1, 1, 1], [0, 0, 0]];
-      case 'L':
-        return [[0, 0, 1], [1, 1, 1], [0, 0, 0]];
-      case 'O':
-        return [[1, 1], [1, 1]];
-      case 'S':
-        return [[0, 1, 1], [1, 1, 0], [0, 0, 0]];
-      case 'T':
-        return [[0, 1, 0], [1, 1, 1], [0, 0, 0]];
-      case 'Z':
-        return [[1, 1, 0], [0, 1, 1], [0, 0, 0]];
-      default:
-        return [];
-    }
+    // This method is no longer needed as shapes are directly from constants
+    return [];
   }
 
   getSkinColor(): string {

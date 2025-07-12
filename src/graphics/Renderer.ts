@@ -1,5 +1,14 @@
 import { Board } from '../core/Board';
 import { Tetromino } from '../core/Tetromino';
+import {
+  LINE_CLEAR_ANIMATION_DURATION,
+  LINE_CLEAR_FLASH_INTERVAL,
+  GAME_OVER_OVERLAY_ALPHA,
+  GAME_OVER_TEXT_FONT_SIZE,
+  LEVEL_UP_ANIMATION_DURATION,
+  LEVEL_UP_FLASH_ALPHA,
+  LEVEL_UP_TEXT_FONT_SIZE,
+} from '../constants';
 
 export class Renderer {
   private gameCanvas: HTMLCanvasElement;
@@ -44,7 +53,7 @@ export class Renderer {
 
   drawBoard(board: Board): void {
     const now = performance.now();
-    const animationDuration = 200; // ms
+    const animationDuration = LINE_CLEAR_ANIMATION_DURATION; // ms
 
     for (let y = 0; y < board.height; y++) {
       for (let x = 0; x < board.width; x++) {
@@ -53,7 +62,7 @@ export class Renderer {
           const elapsed = now - this.lineClearAnimationStartTime;
           if (elapsed < animationDuration) {
             // Flash effect: alternate between clear and filled
-            if (Math.floor(elapsed / 50) % 2 === 0) {
+            if (Math.floor(elapsed / LINE_CLEAR_FLASH_INTERVAL) % 2 === 0) {
               this.gameCtx.fillStyle = 'white'; // Flash color
               this.gameCtx.fillRect(x * this.cellSize, y * this.cellSize, this.cellSize, this.cellSize);
             } else {
@@ -83,20 +92,19 @@ export class Renderer {
     }
   }
 
+  private drawBlock(ctx: CanvasRenderingContext2D, x: number, y: number, color: string): void {
+    ctx.fillStyle = color;
+    ctx.fillRect(x * this.cellSize, y * this.cellSize, this.cellSize, this.cellSize);
+  }
+
   drawTetromino(tetromino: Tetromino): void {
     const shape = tetromino.getShape();
-    const color = tetromino.getSkinColor(); // Use getSkinColor()
+    const color = tetromino.getSkinColor();
 
-    this.gameCtx.fillStyle = color;
     for (let y = 0; y < shape.length; y++) {
       for (let x = 0; x < shape[y].length; x++) {
         if (shape[y][x] !== 0) {
-          this.gameCtx.fillRect(
-            (tetromino.x + x) * this.cellSize,
-            (tetromino.y + y) * this.cellSize,
-            this.cellSize,
-            this.cellSize
-          );
+          this.drawBlock(this.gameCtx, tetromino.x + x, tetromino.y + y, color);
         }
       }
     }
@@ -116,10 +124,10 @@ export class Renderer {
   }
 
   drawGameOver(): void {
-    this.gameCtx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+    this.gameCtx.fillStyle = `rgba(0, 0, 0, ${GAME_OVER_OVERLAY_ALPHA})`;
     this.gameCtx.fillRect(0, this.gameCanvas.height / 2 - 30, this.gameCanvas.width, 60);
     this.gameCtx.fillStyle = 'white';
-    this.gameCtx.font = '30px Arial';
+    this.gameCtx.font = `${GAME_OVER_TEXT_FONT_SIZE}px Arial`;
     this.gameCtx.textAlign = 'center';
     this.gameCtx.fillText('Game Over', this.gameCanvas.width / 2, this.gameCanvas.height / 2 + 10);
   }
@@ -129,18 +137,12 @@ export class Renderer {
     let currentOffsetY = 0; // Start from top of nextCanvas
     for (const tetromino of tetrominos) {
       const shape = tetromino.getShape();
-      const color = tetromino.getSkinColor(); // Use getSkinColor()
+      const color = tetromino.getSkinColor();
 
-      this.nextCtx.fillStyle = color;
       for (let y = 0; y < shape.length; y++) {
         for (let x = 0; x < shape[y].length; x++) {
           if (shape[y][x] !== 0) {
-            this.nextCtx.fillRect(
-              x * this.cellSize,
-              (currentOffsetY + y) * this.cellSize,
-              this.cellSize,
-              this.cellSize
-            );
+            this.drawBlock(this.nextCtx, x, currentOffsetY + y, color);
           }
         }
       }
@@ -151,49 +153,25 @@ export class Renderer {
   drawHoldTetromino(tetromino: Tetromino): void {
     this.clearHoldCanvas(); // Clear before drawing
     const shape = tetromino.getShape();
-    const color = tetromino.getSkinColor(); // Use getSkinColor()
+    const color = tetromino.getSkinColor();
 
-    this.holdCtx.fillStyle = color;
     for (let y = 0; y < shape.length; y++) {
       for (let x = 0; x < shape[y].length; x++) {
         if (shape[y][x] !== 0) {
-          this.holdCtx.fillRect(
-            x * this.cellSize,
-            y * this.cellSize,
-            this.cellSize,
-            this.cellSize
-          );
+          this.drawBlock(this.holdCtx, x, y, color);
         }
       }
     }
-  }
-
-  drawScore(score: number): void {
-    // Score is now handled by UIManager, no longer drawn on canvas
-  }
-
-  drawHighScore(highScore: number): void {
-    // High Score is now handled by UIManager, no longer drawn on canvas
-  }
-
-  drawLevel(level: number): void {
-    // Level is now handled by UIManager, no longer drawn on canvas
   }
 
   drawGhostTetromino(tetromino: Tetromino, ghostY: number): void {
     const shape = tetromino.getShape();
     const color = 'rgba(255, 255, 255, 0.3)'; // Transparent white
 
-    this.gameCtx.fillStyle = color;
     for (let y = 0; y < shape.length; y++) {
       for (let x = 0; x < shape[y].length; x++) {
         if (shape[y][x] !== 0) {
-          this.gameCtx.fillRect(
-            (tetromino.x + x) * this.cellSize,
-            (ghostY + y) * this.cellSize,
-            this.cellSize,
-            this.cellSize
-          );
+          this.drawBlock(this.gameCtx, tetromino.x + x, ghostY + y, color);
         }
       }
     }
@@ -212,16 +190,16 @@ export class Renderer {
     if (this.levelUpAnimationStartTime === null) return;
 
     const now = performance.now();
-    const animationDuration = 1000; // 1 second
+    const animationDuration = LEVEL_UP_ANIMATION_DURATION; // 1 second
     const elapsed = now - this.levelUpAnimationStartTime;
 
     if (elapsed < animationDuration) {
       this.gameCtx.save();
-      this.gameCtx.fillStyle = 'rgba(255, 255, 255, ' + (1 - elapsed / animationDuration) * 0.5 + ')'; // Fading white flash
+      this.gameCtx.fillStyle = `rgba(255, 255, 255, ${ (1 - elapsed / animationDuration) * LEVEL_UP_FLASH_ALPHA})`; // Fading white flash
       this.gameCtx.fillRect(0, 0, this.gameCanvas.width, this.gameCanvas.height);
 
       this.gameCtx.fillStyle = 'white';
-      this.gameCtx.font = 'bold 60px Arial';
+      this.gameCtx.font = `bold ${LEVEL_UP_TEXT_FONT_SIZE}px Arial`;
       this.gameCtx.textAlign = 'center';
       this.gameCtx.textBaseline = 'middle';
       this.gameCtx.fillText('LEVEL UP!', this.gameCanvas.width / 2, this.gameCanvas.height / 2);
