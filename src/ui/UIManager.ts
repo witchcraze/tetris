@@ -12,6 +12,8 @@ export class UIManager {
     private quitConfirmationDialogElement: HTMLElement;
     private confirmQuitButton: HTMLButtonElement;
     private cancelQuitButton: HTMLButtonElement;
+    private creditsScreenElement: HTMLElement;
+    private closeCreditsButton: HTMLButtonElement;
 
     constructor(game: Game, renderer: Renderer) {
         this.scoreElement = document.getElementById("score")!;
@@ -27,6 +29,8 @@ export class UIManager {
         this.quitConfirmationDialogElement = document.getElementById("quitConfirmationDialog")!;
         this.confirmQuitButton = document.getElementById("confirmQuitButton") as HTMLButtonElement;
         this.cancelQuitButton = document.getElementById("cancelQuitButton") as HTMLButtonElement;
+        this.creditsScreenElement = document.getElementById("creditsScreen")!;
+        this.closeCreditsButton = document.getElementById("closeCreditsButton") as HTMLButtonElement;
 
         this.startButton.addEventListener("click", () => {
             game.start();
@@ -65,6 +69,11 @@ export class UIManager {
 
         this.cancelQuitButton.addEventListener("click", () => {
             this.hideQuitConfirmationDialog();
+        });
+
+        this.closeCreditsButton.addEventListener("click", () => {
+            this.hideCreditsScreen();
+            this.showMainMenu();
         });
     }
 
@@ -108,5 +117,14 @@ export class UIManager {
 
     public hideQuitConfirmationDialog(): void {
         this.quitConfirmationDialogElement.style.display = "none";
+    }
+
+    public showCreditsScreen(): void {
+        this.creditsScreenElement.style.display = "flex";
+        this.hideMainMenu();
+    }
+
+    public hideCreditsScreen(): void {
+        this.creditsScreenElement.style.display = "none";
     }
 }
