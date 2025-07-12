@@ -125,6 +125,15 @@ document.getElementById('startButton')?.addEventListener('click', () => {
   gameLoop(0);
 });
 
+document.getElementById('creditsButton')?.addEventListener('click', () => {
+  uiManager.showCreditsScreen();
+});
+
+document.getElementById('closeCreditsButton')?.addEventListener('click', () => {
+  uiManager.hideCreditsScreen();
+  uiManager.showMainMenu();
+});
+
 document.addEventListener('DOMContentLoaded', () => {
   const versionDisplay = document.getElementById('versionDisplay') as HTMLElement;
   if (versionDisplay) {
