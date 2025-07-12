@@ -53,7 +53,35 @@ This will:
 
 Open your web browser and navigate to the address provided by the development server to see the game running.
 
-## 5. Building for Production
+## 5. Docker Development Environment Setup
+
+For a consistent and isolated development environment, you can use Docker. Ensure you have Docker installed on your system.
+
+### 5.1. Build and Run with Docker Compose
+
+Navigate to the project root directory and run the following command:
+
+```bash
+npm run docker:start
+```
+
+This command will:
+
+*   Build the Docker image (if not already built).
+*   Start the Docker container.
+*   Map port 8080 from the container to your host machine.
+
+Once the container is running, open your web browser and navigate to `http://localhost:8080/` to see the game.
+
+### 5.2. Stopping the Docker Environment
+
+To stop the Docker containers, press `Ctrl+C` in the terminal where `npm run docker:start` is running. To remove the containers and networks, run:
+
+```bash
+docker-compose down
+```
+
+## 6. Building for Production
 
 To create a production-ready build of the game, use the following command:
 
