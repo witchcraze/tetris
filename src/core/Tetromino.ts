@@ -44,15 +44,34 @@ export class Tetromino {
   }
 
   rotate(): void {
-    // Transpose the matrix
-    for (let y = 0; y < this.shape.length; y++) {
-      for (let x = 0; x < y; x++) {
-        [this.shape[y][x], this.shape[x][y]] = [this.shape[x][y], this.shape[y][x]];
+    if (this.type === 'I') {
+      // I-tetromino has special rotation
+      if (this.shape.length === 4 && this.shape[1][0] === 1) { // Horizontal I
+        this.shape = [
+          [0, 1, 0, 0],
+          [0, 1, 0, 0],
+          [0, 1, 0, 0],
+          [0, 1, 0, 0],
+        ];
+      } else { // Vertical I
+        this.shape = [
+          [0, 0, 0, 0],
+          [1, 1, 1, 1],
+          [0, 0, 0, 0],
+          [0, 0, 0, 0],
+        ];
       }
-    }
+    } else {
+      const N = this.shape.length;
+      const newShape: number[][] = Array.from({ length: N }, () => Array(N).fill(0));
 
-    // Reverse the order of the columns
-    this.shape.forEach(row => row.reverse());
+      for (let y = 0; y < N; y++) {
+        for (let x = 0; x < N; x++) {
+          newShape[x][N - 1 - y] = this.shape[y][x];
+        }
+      }
+      this.shape = newShape;
+    }
   }
 
   getShape(): number[][] {
