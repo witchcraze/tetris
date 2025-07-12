@@ -78,8 +78,14 @@ h1 {
     transition: background-color 0.3s ease;
 }
 
-#startButton:hover, #restartButton:hover, #confirmQuitButton:hover, #cancelQuitButton:hover {
+#mainMenu button:hover, #restartButton:hover, #confirmQuitButton:hover, #cancelQuitButton:hover {
     background-color: #4fa3d7;
+}
+
+#versionDisplay {
+    font-size: 0.8em;
+    margin-top: 20px;
+    color: #aaa;
 }
 
 #loadingScreen {

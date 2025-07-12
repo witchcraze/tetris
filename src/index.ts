@@ -3,6 +3,10 @@ import { Renderer } from './graphics/Renderer';
 import { LocalStorageManager } from './utils/LocalStorageManager';
 import { UIManager } from './ui/UIManager';
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const packageJson = require('../package.json');
+const APP_VERSION = packageJson.version;
+
 const BOARD_WIDTH = 10;
 const BOARD_HEIGHT = 20;
 const CELL_SIZE = 20;
@@ -119,4 +123,11 @@ document.getElementById('startButton')?.addEventListener('click', () => {
   uiManager.hideMainMenu();
   game.start();
   gameLoop(0);
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+  const versionDisplay = document.getElementById('versionDisplay') as HTMLElement;
+  if (versionDisplay) {
+    versionDisplay.textContent = `Version: ${APP_VERSION}`;
+  }
 });
