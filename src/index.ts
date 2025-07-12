@@ -87,4 +87,26 @@ document.addEventListener('keydown', (event) => {
 });
 
 // Initial setup
-uiManager.showMainMenu(); // Show main menu initially
+const loadingScreen = document.getElementById('loadingScreen') as HTMLElement;
+
+// Initial setup
+uiManager.hideMainMenu(); // Ensure main menu is hidden initially
+
+function simulateLoading(): Promise<void> {
+  return new Promise(resolve => {
+    setTimeout(() => {
+      resolve();
+    }, 2000); // Simulate 2 seconds of loading
+  });
+}
+
+simulateLoading().then(() => {
+  loadingScreen.style.display = 'none'; // Hide loading screen
+  uiManager.showMainMenu(); // Show main menu after loading
+});
+
+document.getElementById('startButton')?.addEventListener('click', () => {
+  uiManager.hideMainMenu();
+  game.start();
+  gameLoop(0);
+});
