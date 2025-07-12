@@ -1,6 +1,21 @@
 import { Board } from './Board';
 import { Tetromino } from './Tetromino';
 import { LocalStorageManager } from '../utils/LocalStorageManager';
+import {
+  INITIAL_NEXT_TETROMINOS_COUNT,
+  BASE_DROP_SPEED,
+  DROP_SPEED_DECREMENT_PER_LEVEL,
+  LEVEL_UP_SCORE_THRESHOLD,
+  SCORE_SINGLE_LINE,
+  SCORE_DOUBLE_LINE,
+  SCORE_TRIPLE_LINE,
+  SCORE_TETRIS,
+  SCORE_HARD_DROP_PER_CELL,
+  LOCAL_STORAGE_HIGH_SCORE_KEY,
+  TETROMINO_TYPES,
+  DEFAULT_SKIN,
+  GRAYSCALE_SKIN,
+} from '../constants';
 
 export class Game {
   public board: Board;
@@ -13,18 +28,9 @@ export class Game {
   private level: number = 1;
   private gameOver: boolean = false;
 
-  private tetrominoTypes = ['I', 'J', 'L', 'O', 'S', 'T', 'Z'];
   private onLineClearCallback: ((lines: number) => void) | null = null;
   private onLevelUpCallback: ((level: number) => void) | null = null;
-  private currentSkin: { [key: string]: string } = {
-    'I': 'cyan',
-    'J': 'blue',
-    'L': 'orange',
-    'O': 'yellow',
-    'S': 'lime',
-    'T': 'purple',
-    'Z': 'red',
-  }; // Default skin
+  private currentSkin: { [key: string]: string } = DEFAULT_SKIN; // Default skin
 
   constructor(
     boardWidth: number,
@@ -42,43 +48,16 @@ export class Game {
   }
 
   public setTetrominoSkin(skinName: string): void {
-    // In a real scenario, you would load skin data from a predefined set
-    // For now, we'll use a simple mapping or assume skinName is a color
     switch (skinName) {
       case 'default':
-        this.currentSkin = {
-          'I': 'cyan',
-          'J': 'blue',
-          'L': 'orange',
-          'O': 'yellow',
-          'S': 'lime',
-          'T': 'purple',
-          'Z': 'red',
-        };
+        this.currentSkin = DEFAULT_SKIN;
         break;
       case 'grayscale':
-        this.currentSkin = {
-          'I': '#808080',
-          'J': '#808080',
-          'L': '#808080',
-          'O': '#808080',
-          'S': '#808080',
-          'T': '#808080',
-          'Z': '#808080',
-        };
+        this.currentSkin = GRAYSCALE_SKIN;
         break;
-      // Add more cases for different skins
       default:
         // Assume skinName is a single color to apply to all
-        this.currentSkin = {
-          'I': skinName,
-          'J': skinName,
-          'L': skinName,
-          'O': skinName,
-          'S': skinName,
-          'T': skinName,
-          'Z': skinName,
-        };
+        this.currentSkin = TETROMINO_TYPES.reduce((acc, type) => ({ ...acc, [type]: skinName }), {});
         break;
     }
     // Re-apply skin to current and next tetrominos if they exist
@@ -95,12 +74,12 @@ export class Game {
     this.gameOver = false;
     this.score = 0;
     this.level = 1;
-    this.highScore = parseInt(LocalStorageManager.loadItem('highScore') || '0');
+    this.highScore = parseInt(LocalStorageManager.loadItem(LOCAL_STORAGE_HIGH_SCORE_KEY) || '0');
     this.board.clear();
     this.holdTetromino = null;
     this.canHold = true;
     this.nextTetrominos = []; // Initialize as empty array
-    for (let i = 0; i < 3; i++) { // Generate 3 next tetrominos
+    for (let i = 0; i < INITIAL_NEXT_TETROMINOS_COUNT; i++) { // Generate 3 next tetrominos
       this.nextTetrominos.push(this.generateRandomTetromino());
     }
     this.spawnTetromino();
@@ -129,20 +108,20 @@ export class Game {
   private getScoreForLines(lines: number): number {
     switch (lines) {
       case 1:
-        return 100;
+        return SCORE_SINGLE_LINE;
       case 2:
-        return 300;
+        return SCORE_DOUBLE_LINE;
       case 3:
-        return 500;
+        return SCORE_TRIPLE_LINE;
       case 4:
-        return 800;
+        return SCORE_TETRIS;
       default:
         return 0;
     }
   }
 
   private checkLevelUp(): void {
-    const newLevel = Math.floor(this.score / 1000) + 1;
+    const newLevel = Math.floor(this.score / LEVEL_UP_SCORE_THRESHOLD) + 1;
     if (newLevel > this.level) {
       this.level = newLevel;
       if (this.onLevelUpCallback) {
@@ -158,7 +137,7 @@ export class Game {
   public getDropSpeed(): number {
     // Adjust speed based on level (e.g., faster for higher levels)
     // Base speed: 500ms, decrease by 50ms per level
-    return Math.max(50, 500 - (this.level - 1) * 50);
+    return Math.max(50, BASE_DROP_SPEED - (this.level - 1) * DROP_SPEED_DECREMENT_PER_LEVEL);
   }
 
   spawnTetromino(): void {
@@ -172,7 +151,7 @@ export class Game {
   }
 
   private generateRandomTetromino(): Tetromino {
-    const randomType = this.tetrominoTypes[Math.floor(Math.random() * this.tetrominoTypes.length)];
+    const randomType = TETROMINO_TYPES[Math.floor(Math.random() * TETROMINO_TYPES.length)];
     return new Tetromino(Math.floor(this.board.width / 2) - 2, 0, randomType, this.currentSkin);
   }
 
@@ -229,7 +208,7 @@ export class Game {
     if (this.gameOver) {
       if (this.score > this.highScore) {
         this.highScore = this.score;
-        LocalStorageManager.saveItem('highScore', this.highScore.toString());
+        LocalStorageManager.saveItem(LOCAL_STORAGE_HIGH_SCORE_KEY, this.highScore.toString());
       }
     }
     return this.gameOver;
@@ -261,7 +240,7 @@ export class Game {
     if (ghostPosition) {
       this.currentTetromino.y = ghostPosition.y;
       const distanceDropped = this.currentTetromino.y - initialY;
-      this.score += distanceDropped * 2; // Score for hard drop (2 points per cell dropped)
+      this.score += distanceDropped * SCORE_HARD_DROP_PER_CELL; // Score for hard drop (2 points per cell dropped)
       this.board.placeTetromino(this.currentTetromino);
       const linesCleared = this.board.clearLines();
       this.score += this.getScoreForLines(linesCleared);
