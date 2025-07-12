@@ -88,3 +88,4 @@ export class UIManager {
         this.mainMenuElement.style.display = "none";
         document.getElementById("game-container")!.style.display = "flex"; // Show game container
     }
+}
