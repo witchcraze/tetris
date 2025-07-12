@@ -103,8 +103,16 @@ function simulateLoading(): Promise<void> {
 }
 
 simulateLoading().then(() => {
+  const loadingScreen = document.getElementById('loadingScreen') as HTMLElement;
   loadingScreen.style.display = 'none'; // Hide loading screen
-  uiManager.showMainMenu(); // Show main menu after loading
+
+  const introAnimation = document.getElementById('introAnimation') as HTMLElement;
+  introAnimation.style.display = 'flex'; // Show intro animation
+
+  introAnimation.addEventListener('animationend', () => {
+    introAnimation.style.display = 'none'; // Hide intro animation after it ends
+    uiManager.showMainMenu(); // Show main menu after intro animation
+  }, { once: true }); // Use { once: true } to remove the listener after it fires
 });
 
 document.getElementById('startButton')?.addEventListener('click', () => {
