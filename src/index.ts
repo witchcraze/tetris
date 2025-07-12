@@ -77,6 +77,8 @@ document.addEventListener('keydown', (event) => {
     uiManager.hideGameOver();
     uiManager.hideMainMenu(); // Hide main menu on game start
     gameLoop(0);
+  } else if (event.key === 'Escape') {
+    uiManager.showQuitConfirmationDialog();
   } else {
     if (event.key === ' ') {
       game.hardDrop();

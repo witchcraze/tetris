@@ -1,6 +1,3 @@
-import { Game } from "../core/Game";
-import { Renderer } from "../graphics/Renderer";
-
 export class UIManager {
     private scoreElement: HTMLElement;
     private highScoreElement: HTMLElement;
@@ -12,6 +9,9 @@ export class UIManager {
     private tetrominoSkinSelect: HTMLSelectElement; // Add new property
     private renderer: Renderer; // Add renderer property
     private mainMenuElement: HTMLElement; // Add mainMenuElement
+    private quitConfirmationDialogElement: HTMLElement;
+    private confirmQuitButton: HTMLButtonElement;
+    private cancelQuitButton: HTMLButtonElement;
 
     constructor(game: Game, renderer: Renderer) {
         this.scoreElement = document.getElementById("score")!;
@@ -24,6 +24,9 @@ export class UIManager {
         this.tetrominoSkinSelect = document.getElementById("tetrominoSkinSelect") as HTMLSelectElement; // Get new element
         this.renderer = renderer; // Assign renderer
         this.mainMenuElement = document.getElementById("mainMenu")!; // Get mainMenuElement
+        this.quitConfirmationDialogElement = document.getElementById("quitConfirmationDialog")!;
+        this.confirmQuitButton = document.getElementById("confirmQuitButton") as HTMLButtonElement;
+        this.cancelQuitButton = document.getElementById("cancelQuitButton") as HTMLButtonElement;
 
         this.startButton.addEventListener("click", () => {
             game.start();
@@ -52,6 +55,16 @@ export class UIManager {
         this.tetrominoSkinSelect.addEventListener("change", (event) => {
             const selectedSkin = (event.target as HTMLSelectElement).value;
             game.setTetrominoSkin(selectedSkin); // Call a new method in Game.ts
+        });
+
+        this.confirmQuitButton.addEventListener("click", () => {
+            // Logic to quit the game (e.g., return to main menu or close window)
+            this.hideQuitConfirmationDialog();
+            this.showMainMenu();
+        });
+
+        this.cancelQuitButton.addEventListener("click", () => {
+            this.hideQuitConfirmationDialog();
         });
     }
 
@@ -87,5 +100,13 @@ export class UIManager {
     public hideMainMenu(): void {
         this.mainMenuElement.style.display = "none";
         document.getElementById("game-container")!.style.display = "flex"; // Show game container
+    }
+
+    public showQuitConfirmationDialog(): void {
+        this.quitConfirmationDialogElement.style.display = "flex";
+    }
+
+    public hideQuitConfirmationDialog(): void {
+        this.quitConfirmationDialogElement.style.display = "none";
     }
 }
