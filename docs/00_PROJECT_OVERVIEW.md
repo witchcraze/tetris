@@ -12,7 +12,7 @@ The primary purpose of this project is to provide a well-structured, maintainabl
 
 *   **Educational:** Serve as a learning resource for developers interested in game development with TypeScript and HTML Canvas.
 *   **Extensible:** Design the game with modularity in mind, allowing for easy addition of new features, game modes, and customization options.
-*   **Performant:** Ensure a smooth and responsive gameplay experience.
+*   **Performant:** Ensure a smooth and responsive gameplay experience, with ongoing efforts to optimize rendering and game logic.
 *   **Maintainable:** Adhere to high coding standards and provide comprehensive documentation to facilitate long-term maintenance.
 
 ## 3. Target Users

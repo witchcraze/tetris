@@ -22,6 +22,7 @@ export class Renderer {
   private lineClearAnimationLines: number[] = [];
   private levelUpAnimationStartTime: number | null = null;
   private backgroundImage: HTMLImageElement | null = null;
+  private needsRedraw: boolean = true;
 
   constructor(gameCanvasId: string, nextCanvasId: string, holdCanvasId: string, cellSize: number) {
     this.gameCanvas = document.getElementById(gameCanvasId) as HTMLCanvasElement;
@@ -51,9 +52,19 @@ export class Renderer {
     }
   }
 
+  public setNeedsRedraw(): void {
+    this.needsRedraw = true;
+  }
+
   drawBoard(board: Board): void {
     const now = performance.now();
     const animationDuration = LINE_CLEAR_ANIMATION_DURATION; // ms
+
+    // Clear the entire canvas only if a full redraw is needed
+    if (this.needsRedraw) {
+      this.clearGameCanvas();
+      this.needsRedraw = false;
+    }
 
     for (let y = 0; y < board.height; y++) {
       for (let x = 0; x < board.width; x++) {
@@ -78,6 +89,7 @@ export class Renderer {
             // Animation finished, reset
             this.lineClearAnimationStartTime = null;
             this.lineClearAnimationLines = [];
+            this.needsRedraw = true; // Force redraw after animation
           }
         } else {
           // Normal drawing
@@ -85,6 +97,8 @@ export class Renderer {
             this.gameCtx.fillStyle = board.grid[y][x] as string;
             this.gameCtx.fillRect(x * this.cellSize, y * this.cellSize, this.cellSize, this.cellSize);
           } else {
+            // Only clear if the cell was previously drawn (not null)
+            // This is a simplification; a true dirty rect would track previous state
             this.gameCtx.clearRect(x * this.cellSize, y * this.cellSize, this.cellSize, this.cellSize);
           }
         }
@@ -108,28 +122,6 @@ export class Renderer {
         }
       }
     }
-  }
-
-  clearGameCanvas(): void {
-    this.gameCtx.clearRect(0, 0, this.gameCanvas.width, this.gameCanvas.height);
-    this.drawBackground(); // Draw background after clearing
-  }
-
-  clearNextCanvas(): void {
-    this.nextCtx.clearRect(0, 0, this.nextCanvas.width, this.nextCanvas.height);
-  }
-
-  clearHoldCanvas(): void {
-    this.holdCtx.clearRect(0, 0, this.holdCanvas.width, this.holdCanvas.height);
-  }
-
-  drawGameOver(): void {
-    this.gameCtx.fillStyle = `rgba(0, 0, 0, ${GAME_OVER_OVERLAY_ALPHA})`;
-    this.gameCtx.fillRect(0, this.gameCanvas.height / 2 - 30, this.gameCanvas.width, 60);
-    this.gameCtx.fillStyle = 'white';
-    this.gameCtx.font = `${GAME_OVER_TEXT_FONT_SIZE}px Arial`;
-    this.gameCtx.textAlign = 'center';
-    this.gameCtx.fillText('Game Over', this.gameCanvas.width / 2, this.gameCanvas.height / 2 + 10);
   }
 
   drawNextTetrominos(tetrominos: Tetromino[]): void {

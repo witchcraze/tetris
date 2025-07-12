@@ -50,15 +50,18 @@ export class Board {
 
   clearLines(): number {
     let linesCleared = 0;
+    const newGrid: (string | null)[][] = Array(this.height).fill(null).map(() => Array(this.width).fill(null));
+    let newRow = this.height - 1;
+
     for (let y = this.height - 1; y >= 0; y--) {
       if (this.grid[y].every(cell => cell !== null)) {
-        // Line is full, clear it
-        this.grid.splice(y, 1);
-        this.grid.unshift(Array(this.width).fill(null));
         linesCleared++;
-        y++; // Check the new line at the same row index
+      } else {
+        newGrid[newRow] = this.grid[y];
+        newRow--;
       }
     }
+    this.grid = newGrid;
     return linesCleared;
   }
 

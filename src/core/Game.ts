@@ -86,6 +86,7 @@ export class Game {
   }
 
   update(): void {
+    console.time("Game.update");
     if (this.gameOver) return;
 
     if (this.currentTetromino) {
@@ -94,7 +95,9 @@ export class Game {
         this.currentTetromino.move(0, 1);
       } else {
         this.board.placeTetromino(this.currentTetromino);
+        console.time("Board.clearLines");
         const linesCleared = this.board.clearLines();
+        console.timeEnd("Board.clearLines");
         if (linesCleared > 0 && this.onLineClearCallback) {
           this.onLineClearCallback(linesCleared);
         }
@@ -103,6 +106,7 @@ export class Game {
         this.spawnTetromino();
       }
     }
+    console.timeEnd("Game.update");
   }
 
   private getScoreForLines(lines: number): number {
