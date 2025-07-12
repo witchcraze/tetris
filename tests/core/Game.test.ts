@@ -45,6 +45,68 @@ describe('Game', () => {
     expect(game.getLevel()).toBe(1);
   });
 
+  it('should call onLineClear callback when lines are cleared', () => {
+    const onLineClearMock = jest.fn();
+    game = new Game(10, 20, onLineClearMock);
+    game.start();
+
+    // Manually set up a scenario for line clear
+    game.board.grid[19].fill('test_color'); // Fill a line
+    game.currentTetromino = new Tetromino(0, 18, 'I', {}); // Place a tetromino to complete the line
+    game.update(); // This should trigger line clear
+
+    expect(onLineClearMock).toHaveBeenCalledWith(1);
+  });
+
+  it('should call onLevelUp callback when level increases', () => {
+    const onLevelUpMock = jest.fn();
+    game = new Game(10, 20, undefined, onLevelUpMock);
+    game.start();
+
+    // Simulate multiple line clears to reach level up score
+    // Each single line clear gives 100 points. Need 1000 points for level 2.
+    // So, 10 single line clears are needed.
+    for (let i = 0; i < 10; i++) {
+      game.currentTetromino = new Tetromino(0, 0, 'I', {}); // Place a tetromino
+      game.board.grid[19].fill('test_color'); // Fill a line
+      game.hardDrop(); // This should trigger line clear and score update
+    }
+
+    expect(onLevelUpMock).toHaveBeenCalledWith(2);
+  });
+
+  describe('setTetrominoSkin', () => {
+    it('should set default skin correctly', () => {
+      game.setTetrominoSkin('default');
+      expect(game['currentSkin']['I']).toBe('cyan');
+      expect(game['currentSkin']['J']).toBe('blue');
+    });
+
+    it('should set grayscale skin correctly', () => {
+      game.setTetrominoSkin('grayscale');
+      expect(game['currentSkin']['I']).toBe('#808080');
+      expect(game['currentSkin']['J']).toBe('#808080');
+    });
+
+    it('should set custom color skin correctly', () => {
+      game.setTetrominoSkin('green');
+      expect(game['currentSkin']['I']).toBe('green');
+      expect(game['currentSkin']['J']).toBe('green');
+    });
+
+    it('should update current, next, and hold tetrominos with new skin', () => {
+      game.currentTetromino = new Tetromino(0, 0, 'I', {});
+      game.nextTetrominos = [new Tetromino(0, 0, 'J', {})];
+      game.holdTetromino = new Tetromino(0, 0, 'L', {});
+
+      game.setTetrominoSkin('red');
+
+      expect(game.currentTetromino?.getSkinColor()).toBe('red');
+      expect(game.nextTetrominos[0]?.getSkinColor()).toBe('red');
+      expect(game.holdTetromino?.getSkinColor()).toBe('red');
+    });
+  });
+
   // Helper to fill a line on the game's board
   const fillLine = (y: number) => {
     for (let x = 0; x < game.board.width; x++) {
@@ -101,6 +163,17 @@ describe('Game', () => {
     game.hardDrop();
     const distanceDropped = ghostY - initialY;
     expect(game.getScore()).toBe(distanceDropped * 2);
+  });
+
+  it('should add score for hard drop with line clear', () => {
+    fillLine(19); // Fill a line
+    game.currentTetromino = new Tetromino(0, 0, 'I', {}); // Start at top
+    const initialY = game.currentTetromino.y;
+    const ghostY = game.getGhostTetrominoPosition()?.y || 0;
+    game.hardDrop();
+    const distanceDropped = ghostY - initialY;
+    // Score for hard drop + score for single line clear
+    expect(game.getScore()).toBe(distanceDropped * 2 + 100);
   });
 
   it('getGhostTetrominoPosition should return correct ghostY', () => {
@@ -192,6 +265,48 @@ describe('Game', () => {
     expect(game.getDropSpeed()).toBe(50);
   });
 
+  describe('handleInput', () => {
+    it('should move tetromino left on ArrowLeft', () => {
+      game.currentTetromino = new Tetromino(5, 0, 'I', {});
+      game.handleInput('ArrowLeft');
+      expect(game.currentTetromino.x).toBe(4);
+    });
+
+    it('should move tetromino right on ArrowRight', () => {
+      game.currentTetromino = new Tetromino(5, 0, 'I', {});
+      game.handleInput('ArrowRight');
+      expect(game.currentTetromino.x).toBe(6);
+    });
+
+    it('should move tetromino down on ArrowDown', () => {
+      game.currentTetromino = new Tetromino(5, 0, 'I', {});
+      game.handleInput('ArrowDown');
+      expect(game.currentTetromino.y).toBe(1);
+    });
+
+    it('should rotate tetromino on ArrowUp', () => {
+      game.currentTetromino = new Tetromino(5, 0, 'I', {});
+      game.handleInput('ArrowUp');
+      // Expected rotated I-tetromino shape
+      const expectedShape = [
+        [0, 1, 0, 0],
+        [0, 1, 0, 0],
+        [0, 1, 0, 0],
+        [0, 1, 0, 0],
+      ];
+      expect(game.currentTetromino.getShape()).toEqual(expectedShape);
+    });
+
+    it('should not rotate tetromino if collision occurs on ArrowUp', () => {
+      // Place a block to cause collision
+      game.board.grid[19][5] = 'test_color';
+      game.currentTetromino = new Tetromino(5, 18, 'I', {}); // Place I-tetromino near bottom
+      const initialShape = game.currentTetromino.getShape();
+      game.handleInput('ArrowUp');
+      expect(game.currentTetromino.getShape()).toEqual(initialShape);
+    });
+  });
+
   it('should initialize nextTetrominos with 3 tetrominos on start', () => {
     expect(game.nextTetrominos).toHaveLength(3);
     expect(game.nextTetrominos[0]).toBeInstanceOf(Tetromino);
@@ -210,6 +325,17 @@ describe('Game', () => {
     expect(game.nextTetrominos[0].getType()).toEqual(initialNextTetrominos[1]);
     expect(game.nextTetrominos[1].getType()).toEqual(initialNextTetrominos[2]);
     expect(game.nextTetrominos[2]).toBeInstanceOf(Tetromino);
+  });
+
+  it('should set gameOver to true if new tetromino spawns in a collision', () => {
+    // Fill the top of the board to force a collision on spawn
+    for (let x = 0; x < game.board.width; x++) {
+      game.board.grid[0][x] = 'test_color';
+    }
+    // Manually set currentTetromino to null to force spawnTetromino to generate a new one
+    game.currentTetromino = null;
+    game.spawnTetromino();
+    expect(game.isGameOver()).toBe(true);
   });
 
   it('should handle holdTetromino swap correctly with nextTetrominos', () => {
@@ -231,5 +357,14 @@ describe('Game', () => {
     expect(game.holdTetromino?.getType()).toEqual(currentTetrominoAfterFirstHold?.getType());
     expect(game.currentTetromino?.getType()).toEqual(initialCurrentType);
     expect(game.nextTetrominos.map(t => t.getType())).toEqual(nextTetrominosTypesAfterFirstHold);
+  });
+
+  it('should not allow holding if canHold is false', () => {
+    const initialCurrentType = game.currentTetromino?.getType();
+    const initialNextTetrominosTypes = game.nextTetrominos.map(t => t.getType());
+    game.handleInput('c'); // First hold, canHold becomes false
+    game.handleInput('c'); // Attempt second hold
+    expect(game.currentTetromino?.getType()).toEqual(initialNextTetrominosTypes[0]); // Should still be the first next tetromino
+    expect(game.holdTetromino?.getType()).toEqual(initialCurrentType);
   });
 });
