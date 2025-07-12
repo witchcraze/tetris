@@ -50,7 +50,7 @@ h1 {
     color: white;
 }
 
-#mainMenu, #gameOverScreen {
+#mainMenu, #gameOverScreen, #quitConfirmationDialog {
     position: absolute;
     top: 50%;
     left: 50%;
@@ -62,12 +62,12 @@ h1 {
     z-index: 100;
 }
 
-#mainMenu h2, #gameOverScreen h2 {
+#mainMenu h2, #gameOverScreen h2, #quitConfirmationDialog h2 {
     color: #61dafb;
     margin-bottom: 20px;
 }
 
-#startButton, #restartButton {
+#startButton, #restartButton, #confirmQuitButton, #cancelQuitButton {
     background-color: #61dafb;
     color: #282c34;
     border: none;
@@ -78,7 +78,7 @@ h1 {
     transition: background-color 0.3s ease;
 }
 
-#startButton:hover, #restartButton:hover {
+#startButton:hover, #restartButton:hover, #confirmQuitButton:hover, #cancelQuitButton:hover {
     background-color: #4fa3d7;
 }
 
